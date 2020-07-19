@@ -1,0 +1,9 @@
+#resultsPanel{
+     -fx-background-color: white;
+}
+ .panelLabel{
+     -fx-alignment:center;
+}
+#settingsLabel{
+ -fx-background-color: white;
+}
