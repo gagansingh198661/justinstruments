@@ -107,4 +107,5 @@ public class Constants {
     public static final String CERTIFICATE_OF_CALIBRATION = "CERTIFICATE OF CALIBRATION";
     public static final String REPORT_TITLE_COMPANY_NAME = "JUST INSTRUMENTS INC.";
     public static final String REPORT_TITLE_COMPANY_ADDRESS = "173 Advance Blvd, Unit 49, Brampton ON L6T 4Z7";
+    public static final String FILEPATH = "File Path";
 }

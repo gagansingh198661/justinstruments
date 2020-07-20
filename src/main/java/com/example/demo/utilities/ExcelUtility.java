@@ -1,9 +1,6 @@
 package com.example.demo.utilities;
 
-
-
-
-import com.example.demo.controllers.MainController;
+import com.example.demo.dtos.ResponseDTO;
 import com.example.demo.entities.Client;
 import com.example.demo.entities.ExcelResult;
 import com.example.demo.entities.Instrument;
@@ -14,15 +11,17 @@ import com.example.demo.services.ExcelService;
 
 import com.example.demo.services.InstrumentService;
 import com.example.demo.services.MasterInstrumentsService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 import org.apache.poi.ss.usermodel.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileInputStream;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -42,15 +41,21 @@ public class ExcelUtility {
     @Autowired
     private MasterInstrumentsService masterInstrumentsService;
 
-    private static final Logger LOGGER = LogManager.getLogger(ExcelUtility.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelUtility.class);
 
-    public  void updateDatabase(File file)  {
+    public ResponseDTO updateDatabase(File file) {
+        ResponseDTO responseDTO=new ResponseDTO();
         Set<Instrument> instrumentSet=null;
         List<Client> clientList=null;
         List<MasterInstruments> masterInstrumentList=null;
+
+        Workbook wb = null;
         try {
-            Workbook wb = WorkbookFactory.create(file);
-            int numOfSheets=  wb.getNumberOfSheets();
+            wb = WorkbookFactory.create(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int numOfSheets=  wb.getNumberOfSheets();
             for(int i=0;i<numOfSheets; i++) {
                 Sheet mySheet = wb.getSheetAt(i);
                 Collection collection=processResult(mySheet);
@@ -71,10 +76,9 @@ public class ExcelUtility {
                 clientService.saveAll(clientList);
                 masterInstrumentsService.saveAll(masterInstrumentList);
 
-        }catch (Exception e){
-            LOGGER.error("Error : ",e);
-            e.printStackTrace();
-        }
+
+        responseDTO.setReturned(true);
+        return responseDTO;
     }
 
     private  Collection processResult(Sheet name) {

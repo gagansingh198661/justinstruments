@@ -1,10 +1,11 @@
 package com.example.demo.utilities;
 
 
-import com.example.demo.dtos.ReportDTO;
+
 import com.example.demo.entities.Report;
-import com.example.demo.repositories.ApplicationRepository;
+
 import com.example.demo.services.ApplicationPropertyService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 @Component

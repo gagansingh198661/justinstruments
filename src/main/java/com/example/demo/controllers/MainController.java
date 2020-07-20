@@ -18,9 +18,11 @@ import javafx.fxml.FXML;
 
 import javafx.geometry.Pos;
 
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,12 +31,8 @@ import org.apache.logging.log4j.Logger;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-
-import javax.xml.soap.Text;
 import java.io.*;
 
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -45,7 +43,13 @@ public class MainController  {
     private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     @FXML
+    private Tab settingsTab;
+
+    @FXML
     private TextField client_name_t,date_heading_text,emailTextfiled;
+
+    @FXML
+    private Button updateDatabase;
 
     @FXML
     private Label customer_label,address_label,fax_label;
@@ -352,7 +356,7 @@ public class MainController  {
             }else if(object instanceof TextField){
                 TextField textField=(TextField) object;
                 if(entry.getValue()!=null) {
-                    System.out.println(textField.getId()+"    "+entry.getValue());
+
                     textField.setText(entry.getValue());
                 }else{
                     textField.setText("");
@@ -674,13 +678,24 @@ public class MainController  {
 
 
     public void findExcelFile(ActionEvent actionEvent) {
-
         Stage stage = (Stage) root.getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            filePath.setText(file.getName());
-            excelUtility.updateDatabase(file);
+            filePath.setText(file.getPath());
         }
+
+    }
+
+    public void updateDatabase(ActionEvent actionEvent) {
+
+
+        if(!filePath.getText().equalsIgnoreCase(Constants.FILEPATH)) {
+
+            File file = new File(filePath.getText());
+            excelUtility.updateDatabase(file);
+
+        }
+       //
     }
 }

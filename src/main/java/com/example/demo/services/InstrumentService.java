@@ -4,8 +4,9 @@ package com.example.demo.services;
 import com.example.demo.entities.Instrument;
 import com.example.demo.repositories.InstrumentRepositoryInterface;
 import com.example.demo.utilities.ExcelUtility;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import java.util.Set;
 @Service
 public class InstrumentService {
 
-    private static final Logger LOGGER = LogManager.getLogger(InstrumentService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstrumentService.class);
 
     @Autowired
     private InstrumentRepositoryInterface instrumentRepository;
@@ -27,11 +28,7 @@ public class InstrumentService {
             try {
                 instrumentRepository.save(instruemnt);
             }catch(Exception e){
-
                 LOGGER.error("Error Has Occured :",e);
-                System.out.println("error occured for instruemnt :"+instruemnt.getInstrumentSerialNo()+"  : "+instruemnt.getTagNo()
-                +"  : "+instruemnt.getCal_ref_no()+"  : "+instruemnt.getLocation()+"  "+instruemnt.getRanges());
-                e.printStackTrace();
             }
         }
     }
