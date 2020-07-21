@@ -492,7 +492,7 @@ public class MainController  {
             directoryMap.put(Constants.CUSTOMER,customer_label.getText());
             parameterMap.put(Constants.DIRECTORY,directoryMap);
 
-
+/*gfdsfgdsfgdsgf*/
             Map<String,String> calibrationSettingsMap=new HashMap<>();
             calibrationSettingsMap.put(Constants.TEMPERATUREANDSETTINGSLABEL,settingsAtTestLabel.getText());
             calibrationSettingsMap.put(Constants.TEMPERATUREANDSETTINGSTEXT,settingsAtTestText.getText());
