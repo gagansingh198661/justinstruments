@@ -52,7 +52,7 @@ public class MainController  {
     private Button updateDatabase;
 
     @FXML
-    private Label customer_label,address_label,fax_label;
+    private Label customer_label,address_label,fax_label,settingsAtTestLabel;
 
     @FXML
     private Label phone_label;
@@ -64,7 +64,7 @@ public class MainController  {
     private Label serial_no_1,model_no_1,description_1,e_date_1,manufacturer_1;
 
     @FXML
-    private TextField asset_no_2,tag_no_text,ref_no,toleranceText;
+    private TextField asset_no_2,tag_no_text,ref_no,toleranceText,settingsAtTestText;
 
     @FXML
     private Label model_no_2,description_2,serial_no_2,e_date_2,manufacturer_2;
@@ -493,6 +493,12 @@ public class MainController  {
             parameterMap.put(Constants.DIRECTORY,directoryMap);
 
 
+            Map<String,String> calibrationSettingsMap=new HashMap<>();
+            calibrationSettingsMap.put(Constants.TEMPERATUREANDSETTINGSLABEL,settingsAtTestLabel.getText());
+            calibrationSettingsMap.put(Constants.TEMPERATUREANDSETTINGSTEXT,settingsAtTestText.getText());
+            parameterMap.put(Constants.TEMPERATUREANDSETTINGSMAP,calibrationSettingsMap);
+
+
         }catch (Exception e){
             System.out.println(e);
             throw  e;
@@ -572,6 +578,9 @@ public class MainController  {
         parameterMap.put(manufacturerInstrument,manufacturerInstrument.getText());
         parameterMap.put(descriptionInstrument,descriptionInstrument.getText());
         parameterMap.put(modelInstrument,modelInstrument.getText());
+        parameterMap.put(settingsAtTestText,settingsAtTestText.getText());
+
+
     }
 
     private boolean validateForm(){

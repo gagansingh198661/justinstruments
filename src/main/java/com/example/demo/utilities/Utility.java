@@ -52,8 +52,11 @@ public class Utility {
             }else if(object instanceof TextField) {
                 TextField textField = (TextField) object;
                 if (textField.getText().equals(entry.getValue())&&(!textField.getId().equalsIgnoreCase("tag_no")&&!textField.getId().equalsIgnoreCase("serialNoInstrument")
-                        &&!textField.getId().equalsIgnoreCase("asset_no_2"))) {
-
+                        &&!textField.getId().equalsIgnoreCase("asset_no_2")&&
+                        !textField.getId().equalsIgnoreCase("settingsAtTestText"))) {
+                    return showPopup();
+                }
+                if(textField.getId().equalsIgnoreCase("settingsAtTestText")&&textField.getText().isEmpty()){
                     return showPopup();
                 }
             }else if(object instanceof ComboBox){

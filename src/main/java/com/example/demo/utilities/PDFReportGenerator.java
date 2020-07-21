@@ -80,9 +80,6 @@ public class PDFReportGenerator {
             document.add(calibrationReportTable1);
             document.add(calibrationReportTable2);
             document.close();
-            String[] to=new String[1];
-            to[0]="kd@justinstruments.net";
-            ReportDTO dto=new ReportDTO();
             //dto.setReportName();
            /* new EmailUtility().sendMail("budsy.remo@gmail.com", to
               //      , "Just Instruments Report", "Messagere",details);*/
@@ -253,6 +250,10 @@ public class PDFReportGenerator {
 
         mainTable.addCell(getCell(firstTable));
         mainTable.addCell(getCell(secondTable));
+
+        Map<String,String> settingMap=parameterMap.get(Constants.TEMPERATUREANDSETTINGSMAP);
+        mainTable.addCell(getTableCell(settingMap.get(Constants.TEMPERATUREANDSETTINGSLABEL)));
+        mainTable.addCell(getTableCell(settingMap.get(Constants.TEMPERATUREANDSETTINGSTEXT)));
         return mainTable;
     }
 

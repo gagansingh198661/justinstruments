@@ -135,8 +135,7 @@
 
                                 <Label layoutX="245.0" layoutY="287.0" prefHeight="17.0" prefWidth="62.0" text="Expiry Date" />
                                 <Label fx:id="e_date_2" layoutX="329.0" layoutY="287.0" prefHeight="17.0" prefWidth="152.0" text="NA" />
-                                <Label layoutX="11.0" layoutY="322.0" prefHeight="17.0" prefWidth="253.0" text="Temperature And RH at the time of calibration :" />
-                                <Label layoutX="279.0" layoutY="322.0" text="Settings at Test" />
+                                <Label fx:id="settingsAtTestLabel" layoutX="11.0" layoutY="322.0" prefHeight="17.0" prefWidth="253.0" text="Temperature And RH at the time of calibration :" />
                                 <Label layoutX="14.0" layoutY="351.0" text="DESCRIPTION" />
 
                                 <Label id="description" fx:id="descriptionInstrument" layoutX="104.0" layoutY="351.0" prefHeight="17.0" prefWidth="124.0" text="..." />
@@ -287,6 +286,7 @@
                                 <TextField fx:id="emailTextfiled" layoutX="425.0" layoutY="109.0" prefHeight="25.0" prefWidth="195.0" promptText="example@jg.com,eg2@jg.com" />
                                 <ComboBox fx:id="rangeCombo" layoutX="97.0" layoutY="442.0" prefHeight="25.0" prefWidth="120.0" promptText="Pick Range" />
                         <TextField fx:id="instrument_serial_no_textfield" layoutX="499.0" layoutY="347.0" prefHeight="25.0" prefWidth="139.0" promptText="Instrument Serial No." />
+                        <TextField id="settingsAtTestText" fx:id="settingsAtTestText" layoutX="329.0" layoutY="318.0" text="21.5 C,52%" />
 
                             </Pane>
                         </content>

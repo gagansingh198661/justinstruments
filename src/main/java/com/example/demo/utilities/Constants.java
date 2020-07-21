@@ -108,4 +108,7 @@ public class Constants {
     public static final String REPORT_TITLE_COMPANY_NAME = "JUST INSTRUMENTS INC.";
     public static final String REPORT_TITLE_COMPANY_ADDRESS = "173 Advance Blvd, Unit 49, Brampton ON L6T 4Z7";
     public static final String FILEPATH = "File Path";
+    public static final String TEMPERATUREANDSETTINGSTEXT = "TEMPERATUREANDSETTINGSTEXT";
+    public static final String TEMPERATUREANDSETTINGSLABEL = "TEMPERATUREANDSETTINGSLABEL";
+    public static final String TEMPERATUREANDSETTINGSMAP = "TEMPERATUREANDSETTINGSMAP";
 }
