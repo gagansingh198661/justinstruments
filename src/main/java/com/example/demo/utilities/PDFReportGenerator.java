@@ -34,10 +34,9 @@ public class PDFReportGenerator {
 
             PdfWriter.getInstance(document, directory);
             document.open();
-            // PdfPTable table = new PdfPTable(6);
-            //addTableHeader(table);
+
             PdfPTable headerOfReport=createHeaderOfReportTable();
-            PdfPTable customerBasicTable =createCustomerBasic(parameterMap.get(Constants.CUSTOMER_BASIC));
+            PdfPTable customerBasicTable =createCustomerBasic(parameterMap.get(Constants.CUSTOMER_BASIC),Constants.CUSTOMER_BASIC);
             customerBasicTable.setSpacingAfter(15);
             customerBasicTable.setSpacingBefore(10);
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
@@ -50,22 +49,23 @@ public class PDFReportGenerator {
             Paragraph calibration_report_title_table = createHeaderTable(Constants.CALIBRATION_REPORT, true);
 
             PdfPTable equipmentTable=createEquipmentTable(parameterMap);
-            equipmentTable.setSpacingAfter(20);
+            equipmentTable.setSpacingBefore(15);
+            equipmentTable.setSpacingAfter(10);
 
             PdfPTable instrumentTable=createInstrumentTable(parameterMap.get(Constants.INSTRUMENT));
+            instrumentTable.setSpacingBefore(10);
             instrumentTable.setSpacingAfter(10);
 
             PdfPTable calibrationResultsTable=createCalibrationResultsTable(parameterMap.get(Constants.CALIBRATION_RESULTS));
-            calibrationResultsTable.setSpacingAfter(20);
+            calibrationResultsTable.setSpacingBefore(15);
+            calibrationResultsTable.setSpacingAfter(10);
 
             PdfPTable calibrationReportTable1=createCalibrationReportTable1(parameterMap.get(Constants.CALIBRATION_REPORT1));
+            calibrationReportTable1.setSpacingBefore(10);
             calibrationReportTable1.setSpacingAfter(20);
 
             PdfPTable calibrationReportTable2=createCalibrationReportTable2(null);
 
-            //Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-            //Chunk chunk = new Chunk("Hello World", font);
-            //document.add(chunk);
             document.add(headerOfReport);
             document.add(certificate_title_table);
             document.add(customerBasicTable);
@@ -98,7 +98,7 @@ public class PDFReportGenerator {
     private static PdfPTable createHeaderOfReportTable() throws IOException, DocumentException {
         //imgFile = new ClassPathResource("pics/justinstruments.png").getFile();
         PdfPTable headerTable=new PdfPTable(3);
-        headerTable.setWidths(new int[]{2,4,2});
+        headerTable.setWidths(new float[]{2,4,2.5f});
 
 
         String imagePath=ResourceUtils.getFile(
@@ -114,16 +114,12 @@ public class PDFReportGenerator {
         addressTable.addCell(getCell(Constants.REPORT_TITLE_COMPANY_ADDRESS,TextAlignment.CENTER,10));
         headerTable.addCell(getCell(addressTable));
 
-        /*PdfPTable emptyTable=new PdfPTable(1);
-        emptyTable.addCell(getCell("",TextAlignment.CENTER));
-        headerTable.addCell(emptyTable);*/
-        //headerTable.addCell(new Phrase(text, FontFactory.getFont(FontFactory.TIMES_ROMAN, 20)));
         PdfPTable contactsTable=new PdfPTable(1);
 
-        contactsTable.addCell(getCell("Tel: +1 289.632.3134", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("+1 647.834.7829", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("+1 877.525.7829", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("Fax: +1 905.216.7829", TextAlignment.LEFT,8));
+        contactsTable.addCell(getCell("  Tel: +1 289.632.3134", TextAlignment.LEFT,8));
+        contactsTable.addCell(getCell("       +1 647.834.7829", TextAlignment.LEFT,8));
+        contactsTable.addCell(getCell("       +1 877.525.7829", TextAlignment.LEFT,8));
+        contactsTable.addCell(getCell("  Fax: +1 905.216.7829", TextAlignment.LEFT,8));
         contactsTable.addCell(getCell("kd@justinstruments.net", TextAlignment.LEFT,8));
         headerTable.addCell(getCell(contactsTable));
         headerTable.setSpacingAfter(25);
@@ -245,8 +241,8 @@ public class PDFReportGenerator {
 
     private static PdfPTable createEquipmentTable(Map<String, Map<String, String>> parameterMap) {
         PdfPTable mainTable=new PdfPTable(2);
-        PdfPTable firstTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_1));
-        PdfPTable secondTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_2));
+        PdfPTable firstTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_1),null);
+        PdfPTable secondTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_2),null);
 
         mainTable.addCell(getCell(firstTable));
         mainTable.addCell(getCell(secondTable));
@@ -293,12 +289,17 @@ public class PDFReportGenerator {
 
     private static PdfPTable createCalibrationResultsTable(Map<String, String> stringStringMap) {
         PdfPTable maintable=new PdfPTable(3);
+        try {
+            maintable.setWidths(new float[]{0.8f,2.6f,2.6f});
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
         maintable.addCell(getTableCell("% FULL SCALE"));
 
-        PdfPTable headerAsFoundTable=generateCalibrationResultsHeader();
+        PdfPTable headerAsFoundTable=generateCalibrationResultsHeader("AS FOUND");
         maintable.addCell(getCell(headerAsFoundTable));
 
-        PdfPTable headerAsLeftTable=generateCalibrationResultsHeader();
+        PdfPTable headerAsLeftTable=generateCalibrationResultsHeader("AS LEFT");
         maintable.addCell(getCell(headerAsLeftTable));
 
 
@@ -329,11 +330,11 @@ public class PDFReportGenerator {
 
 
         PdfPTable errorColumnFound=new PdfPTable(1);
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_0)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_25)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_50)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_75)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_100)));
+        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_0)));
+        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_25)));
+        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_50)));
+        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_75)));
+        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_100)));
 
         PdfPTable outputColumnLeft=new PdfPTable(1);
         outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_0)));
@@ -343,11 +344,11 @@ public class PDFReportGenerator {
         outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_100)));
 
         PdfPTable errorColumnLeft=new PdfPTable(1);
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_0)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_25)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_50)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_75)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_100)));
+        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_0)));
+        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_25)));
+        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_50)));
+        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_75)));
+        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_100)));
 
         PdfPTable foundTable=new PdfPTable(1);
         PdfPTable tempFoundTable=new PdfPTable(3);
@@ -374,12 +375,16 @@ public class PDFReportGenerator {
     }
 
     private static PdfPTable createInstrumentTable(Map<String, String> stringStringMap) {
-        return useGenralLogicToCreateTable(4,stringStringMap);
+        return useGenralLogicToCreateTable(4,stringStringMap,null);
     }
 
-    private static PdfPTable generateCalibrationResultsHeader(){
+    private static PdfPTable generateCalibrationResultsHeader(String heading){
         PdfPTable headerAsLeftTable=new PdfPTable(1);
-        headerAsLeftTable.addCell(getTableCell("AS FOUND"));
+
+        PdfPCell headingCell=new PdfPCell();
+        headingCell.setPhrase(getTableCell(heading));
+        headingCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        headerAsLeftTable.addCell(headingCell);
         PdfPTable subHeaderAsLeftTable=new PdfPTable(3);
         subHeaderAsLeftTable.addCell(getTableCell(Constants.INPUT));
         subHeaderAsLeftTable.addCell(getTableCell(Constants.OUTPUT));
@@ -391,14 +396,15 @@ public class PDFReportGenerator {
 
     private static PdfPTable createCustomerComplete(Map<String, String> parameterMap) throws DocumentException {
         PdfPTable pdfPTable=new PdfPTable(2);
-        pdfPTable.setWidths(new int[]{1,3});
+        pdfPTable.setWidths(new float[]{0.6f,3.4f});
         pdfPTable.addCell(getTableCell(Constants.CUSTOMER));
         pdfPTable.addCell(getTableCell(parameterMap.get(Constants.CUSTOMER)));
-        pdfPTable.addCell(getTableCell(""));
+        pdfPTable.addCell(getTableCell(Constants.ADDRESS));
         pdfPTable.addCell(getTableCell(parameterMap.get(Constants.ADDRESS)));
         pdfPTable.addCell(getTableCell(Constants.PHONE));
 
         PdfPTable cell6Table=new PdfPTable(5);
+        cell6Table.setWidths(new float[]{1,0.6f,1,0.6f,2});
         cell6Table.addCell(getTableCell(parameterMap.get(Constants.PHONE)));
         cell6Table.addCell(getTableCell(Constants.FAX));
         cell6Table.addCell(getTableCell(parameterMap.get(Constants.FAX)));
@@ -408,8 +414,8 @@ public class PDFReportGenerator {
         return pdfPTable;
     }
 
-    private static PdfPTable createCustomerBasic(Map<String, String> parameterMap) {
-        return useGenralLogicToCreateTable(6,parameterMap);
+    private static PdfPTable createCustomerBasic(Map<String, String> parameterMap,String tableName) {
+        return useGenralLogicToCreateTable(6,parameterMap,tableName);
     }
 
     private static PdfPTable useGeneralLogicCreateTableWithOnlyValues(Map<String, String> parameterMap){
@@ -419,8 +425,15 @@ public class PDFReportGenerator {
         }
         return pdfPTable;
     }
-    private static PdfPTable useGenralLogicToCreateTable(int columns, Map<String, String> parameterMap){
+    private static PdfPTable useGenralLogicToCreateTable(int columns, Map<String, String> parameterMap,String tableName){
         PdfPTable pdfTable=new PdfPTable(columns);
+        if(tableName!=null&&tableName.equalsIgnoreCase(Constants.CUSTOMER_BASIC)){
+            try {
+                pdfTable.setWidths(new float[]{1.2f,3f,1,1.2f,1.5f,1.5f});
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+        }
         for(Map.Entry<String, String> entry:parameterMap.entrySet()){
             pdfTable.addCell(getTableCell(entry.getKey()));
             pdfTable.addCell(getTableCell(entry.getValue()));

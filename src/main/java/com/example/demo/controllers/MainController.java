@@ -313,11 +313,15 @@ public class MainController  {
         return clientService.getAll();
     }
 
+
     public void initializeDueDate(ActionEvent actionEvent) {
+
         LocalDate date=cal_date_dp.getValue();
-        LocalDate duedate=date.plusMonths(Long.valueOf(frequency.getValue().toString()));
-        due_date.setText(duedate.toString());
-        date_heading_text.setText(date.toString());
+        if(date!=null) {
+            LocalDate duedate = date.plusMonths(Long.valueOf(frequency.getValue().toString()));
+            due_date.setText(duedate.toString());
+            date_heading_text.setText(date.toString());
+        }
     }
 
 
@@ -369,7 +373,7 @@ public class MainController  {
                     textField.setValue(textField.getPromptText());
                 }
             }
-
+            cal_date_dp.setValue(null);
         }
     }
 
@@ -421,42 +425,41 @@ public class MainController  {
 
             parameterMap.put(Constants.CUSTOMER_COMPLETE, customerCompleteMap);
 
-            Map<String, String> equipmentMap1 = new HashMap<>();
-            equipmentMap1.put(Constants.MANUFACTURER, manufacturer_1.getText());
+            Map<String, String> equipmentMap1 = new LinkedHashMap<>();
             equipmentMap1.put(Constants.DESCRIPTION, description_1.getText());
+            equipmentMap1.put(Constants.MANUFACTURER, manufacturer_1.getText());
             equipmentMap1.put(Constants.MODEL_NO, model_no_1.getText());
             equipmentMap1.put(Constants.SERIAL_NO, serial_no_1.getText());
             equipmentMap1.put(Constants.EXPIRY_DATE, e_date_1.getText());
-
             parameterMap.put(Constants.EQUIPMENT_1, equipmentMap1);
 
-            Map<String, String> equipmentMap2 = new HashMap<>();
-            equipmentMap2.put(Constants.MANUFACTURER, manufacturer_2.getText());
+            Map<String, String> equipmentMap2 = new LinkedHashMap<>();
             equipmentMap2.put(Constants.DESCRIPTION, description_2.getText());
+            equipmentMap2.put(Constants.MANUFACTURER, manufacturer_2.getText());
             equipmentMap2.put(Constants.MODEL_NO, model_no_2.getText());
             equipmentMap2.put(Constants.SERIAL_NO, serial_no_2.getText());
             equipmentMap2.put(Constants.EXPIRY_DATE, e_date_2.getText());
-
             parameterMap.put(Constants.EQUIPMENT_2, equipmentMap2);
 
-            Map<String, String> instrumentMap = new HashMap<>();
+            Map<String, String> instrumentMap = new LinkedHashMap<>();
             instrumentMap.put(Constants.DESCRIPTION, descriptionInstrument.getText());
             instrumentMap.put(Constants.TAG_NO, tag_no_text.getText());
             instrumentMap.put(Constants.MANUFACTURER, manufacturerInstrument.getText());
             instrumentMap.put(Constants.LOCATION, locationInstrument.getText());
             instrumentMap.put(Constants.MODEL_NO, modelInstrument.getText());
-            instrumentMap.put(Constants.TOLERANCE, toleranceText.getText());
+            instrumentMap.put(Constants.TOLERANCE, toleranceText.getText()+" %");
             instrumentMap.put(Constants.SERIAL_NO, serialNoInstrument.getText());
-            if(cal_date_dp.getValue()==null)
-            instrumentMap.put(Constants.CAL_DATE, null);
+            if(cal_date_dp.getValue()!=null)
+            instrumentMap.put(Constants.CAL_DATE, cal_date_dp.getValue().toString());
 
             String rangeString=(String)rangeCombo.getValue();
+
             instrumentMap.put(Constants.RANGE, rangeString);
             instrumentMap.put(Constants.DUE_DATE, due_date.getText());
 
             parameterMap.put(Constants.INSTRUMENT, instrumentMap);
 
-            Map<String, String> calibrationResultsMap = new HashMap<>();
+            Map<String, String> calibrationResultsMap = new LinkedHashMap<>();
             calibrationResultsMap.put(Constants.FOUND_INPUT_0, input_0_found.getText());
             calibrationResultsMap.put(Constants.FOUND_INPUT_25, input_1_found.getText());
             calibrationResultsMap.put(Constants.FOUND_INPUT_50, input_2_found.getText());
@@ -469,11 +472,18 @@ public class MainController  {
             calibrationResultsMap.put(Constants.FOUND_OUTPUT_75, output_3_found.getText());
             calibrationResultsMap.put(Constants.FOUND_OUTPUT_100, output_4_found.getText());
 
+            calibrationResultsMap.put(Constants.FOUND_ERROR_0, error_0_found.getText());
+            calibrationResultsMap.put(Constants.FOUND_ERROR_25, error_1_found.getText());
+            calibrationResultsMap.put(Constants.FOUND_ERROR_50, error_2_found.getText());
+            calibrationResultsMap.put(Constants.FOUND_ERROR_75, error_3_found.getText());
+            calibrationResultsMap.put(Constants.FOUND_ERROR_100, error_4_found.getText());
+
             calibrationResultsMap.put(Constants.LEFT_OUTPUT_0, output_0_last.getText());
             calibrationResultsMap.put(Constants.LEFT_OUTPUT_25, output_1_last.getText());
             calibrationResultsMap.put(Constants.LEFT_OUTPUT_50, output_2_last.getText());
             calibrationResultsMap.put(Constants.LEFT_OUTPUT_75, output_3_last.getText());
             calibrationResultsMap.put(Constants.LEFT_OUTPUT_100, output_4_last.getText());
+
             calibrationResultsMap.put(Constants.LAST_ERROR_0,error_0_last.getText());
             calibrationResultsMap.put(Constants.LAST_ERROR_25,error_1_last.getText());
             calibrationResultsMap.put(Constants.LAST_ERROR_50,error_2_last.getText());
@@ -616,30 +626,45 @@ public class MainController  {
         labelfoundArr[2]=error_2_found;
         labelfoundArr[3]=error_3_found;
         labelfoundArr[4]=error_4_found;
-        Label[] labelLastArr=new Label[5];
-        labelLastArr[0]=error_0_last;
-        labelLastArr[1]=error_1_last;
-        labelLastArr[2]=error_2_last;
-        labelLastArr[3]=error_3_last;
-        labelLastArr[4]=error_4_last;
+        Label[] errorlabel=new Label[5];
+        errorlabel[0]=error_0_last;
+        errorlabel[1]=error_1_last;
+        errorlabel[2]=error_2_last;
+        errorlabel[3]=error_3_last;
+        errorlabel[4]=error_4_last;
 
+        Label[] inputFoundlabel=new Label[5];
+        inputFoundlabel[0]=input_0_found;
+        inputFoundlabel[1]=input_1_found;
+        inputFoundlabel[2]=input_2_found;
+        inputFoundlabel[3]=input_3_found;
+        inputFoundlabel[4]=input_4_found;
+
+        Label[] inputLastlabel=new Label[5];
+        inputLastlabel[0]=input_0_left;
+        inputLastlabel[1]=input_1_left;
+        inputLastlabel[2]=input_2_left;
+        inputLastlabel[3]=input_3_left;
+        inputLastlabel[4]=input_4_left;
 
         List<Output> outputList=outputService.getAll();
-        addListenersToAllText(outputFound, labelfoundArr, outputList);
-        addListenersToAllText(outputLast, labelLastArr, outputList);
+        addListenersToAllText(outputFound, labelfoundArr, inputFoundlabel);
+        addListenersToAllText(outputLast, errorlabel, inputLastlabel);
     }
 
-    private void addListenersToAllText(TextField[] outputFound, Label[] labelfoundArr, List<Output> outputList) {
+    private void addListenersToAllText(TextField[] outputFound, Label[] labelArr, Label[] inputLabel) {
         int i=0;
         for(TextField tField:outputFound){
-            Output output1=outputList.get(i);
-            Label label=labelfoundArr[i];
+            Label output1=inputLabel[i];
+            Label label=labelArr[i];
             tField.textProperty().addListener((observableValue, s, t1) -> {
                 if(Utility.isInputANumber(tField.getText())){
                     double value=Double.valueOf(tField.getText());
-                    String output=String.format("%.2f", value-output1.getOutput());
-                    label.setText(output);
-                    checkIfAllLabelsHaveFilled(outputList);
+                    if(!output1.getText().isEmpty()) {
+                        String output = String.format("%.2f", value - Double.valueOf(output1.getText()));
+                        label.setText(output);
+                        checkIfAllLabelsHaveFilled(inputLabel);
+                    }
                 }else{
                     label.setText("");
                 }
@@ -648,7 +673,7 @@ public class MainController  {
         }
     }
 
-    private void checkIfAllLabelsHaveFilled(List<Output> outputList) {
+    private void checkIfAllLabelsHaveFilled(Label[] inputLabel) {
         try {
             double[] error=new double[5];
             error[0] = Double.valueOf(error_0_last.getText());
@@ -659,8 +684,8 @@ public class MainController  {
             int i=0;
             boolean passed =true;
             for(double err:error){
-                double per=getPercentage(Math.abs(err),outputList.get(i).getOutput());
-                if(per>Double.valueOf(toleranceText.getText())){
+                double per=getPercentage(Math.abs(err),Double.valueOf(inputLabel[i].getText()));
+                if(per>=Double.valueOf(toleranceText.getText())){
                     passed=false;
                 }
                 i++;
