@@ -48,7 +48,7 @@ public class Utility {
                                 !label.getId().equalsIgnoreCase("e_date_2")&&
                         !label.getId().equalsIgnoreCase("serial_no_2")){
                    return  showPopup();
-                }
+                }//
             }else if(object instanceof TextField) {
                 TextField textField = (TextField) object;
                 if (textField.getText().equals(entry.getValue())&&(!textField.getId().equalsIgnoreCase("tag_no")&&!textField.getId().equalsIgnoreCase("serialNoInstrument")
