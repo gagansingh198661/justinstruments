@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,9 +81,7 @@ public class PDFReportGenerator {
             document.add(calibrationReportTable1);
             document.add(calibrationReportTable2);
             document.close();
-            //dto.setReportName();
-           /* new EmailUtility().sendMail("budsy.remo@gmail.com", to
-              //      , "Just Instruments Report", "Messagere",details);*/
+
             Utility.showPopup(Alert.AlertType.CONFIRMATION, "Report Created In Directory");
 
         } catch (DocumentException e) {
@@ -96,7 +95,7 @@ public class PDFReportGenerator {
        // createHeaderOfReportTable();
     }
     private static PdfPTable createHeaderOfReportTable() throws IOException, DocumentException {
-        //imgFile = new ClassPathResource("pics/justinstruments.png").getFile();
+
         PdfPTable headerTable=new PdfPTable(3);
         headerTable.setWidths(new float[]{2,4,2.5f});
 
@@ -272,16 +271,39 @@ public class PDFReportGenerator {
      }
     private static PdfPTable createCalibrationReportTable2(Map<String, String> stringStringMap) throws DocumentException {
         PdfPTable failTable=new PdfPTable(8);
-        failTable.setWidths(new int[]{2,2,1,2,2,1,1,2});
+        failTable.setWidths(new float[]{2.5f,2,1,1,2,1.5f,1,1});
 
         failTable.addCell(getTableCell(Constants.CALIBRATION_BY));
         failTable.addCell(getTableCell(Constants.SIGNEE));
         failTable.addCell(getTableCell(Constants.SIGN));
-        failTable.addCell(getTableCell("          "));
+
+        Image imageSignee2=null;
+        try {
+            String imagePathSign1 = ResourceUtils.getFile("classpath:static/KD.png").getPath();
+            Image imageSignee1 = Image.getInstance(imagePathSign1);
+            imageSignee1.setAlignment(Element.ALIGN_CENTER);
+            imageSignee1.setScaleToFitHeight(true);
+            failTable.addCell(imageSignee1);
+
+            String imagePathSign2 = ResourceUtils.getFile("classpath:static/SIM.png").getPath();
+            imageSignee2 = Image.getInstance(imagePathSign2);
+            imageSignee2.setAlignment(Element.ALIGN_CENTER);
+            imageSignee2.setScaleToFitHeight(true);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
         failTable.addCell(getTableCell(Constants.CHECKED_BY_LABEL));
         failTable.addCell(getTableCell(Constants.SIGNEE_2));
         failTable.addCell(getTableCell(Constants.SIGN));
-        failTable.addCell(getTableCell("          "));
+        failTable.addCell(imageSignee2);
         return failTable;
     }
 
