@@ -18,7 +18,17 @@ public class Client {
 
     private String fax;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Id
+    private long id;
+
     private String name;
 
     private String description;

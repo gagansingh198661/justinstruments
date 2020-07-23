@@ -30,7 +30,7 @@ public class JustinstrumentsApplication extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("Just Instruments");
-		stage.setScene(new Scene(rootNode, 700, 700));
+		stage.setScene(new Scene(rootNode, 750, 700));
 		stage.show();
 	}
 

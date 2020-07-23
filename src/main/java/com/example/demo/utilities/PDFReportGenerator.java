@@ -8,13 +8,11 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import javafx.scene.control.Alert;
 import javafx.scene.text.TextAlignment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -99,10 +97,9 @@ public class PDFReportGenerator {
         PdfPTable headerTable=new PdfPTable(3);
         headerTable.setWidths(new float[]{2,4,2.5f});
 
-
-        String imagePath=ResourceUtils.getFile(
-                "classpath:static/justinstruments.png").getPath();
-        Image image1 = Image.getInstance(imagePath);
+        String imagePath=new ClassPathResource(
+                "/static/justinstruments.png").getPath();
+        Image image1 = Image.getInstance(getByte("/static/justinstruments.png"));
         image1.setAlignment(Element.ALIGN_CENTER);
         image1.scaleAbsolute(75, 75);
         headerTable.addCell(getCell(image1));
@@ -279,14 +276,15 @@ public class PDFReportGenerator {
 
         Image imageSignee2=null;
         try {
-            String imagePathSign1 = ResourceUtils.getFile("classpath:static/KD.png").getPath();
-            Image imageSignee1 = Image.getInstance(imagePathSign1);
+            String imagePathSign1 =new ClassPathResource("/static/SIM.png").getPath();
+            Image imageSignee1 = Image.getInstance(getByte("/static/KD.png"));
+            //Image imageSignee1 = Image.getInstance(imagePathSign1);
             imageSignee1.setAlignment(Element.ALIGN_CENTER);
             imageSignee1.setScaleToFitHeight(true);
             failTable.addCell(imageSignee1);
 
-            String imagePathSign2 = ResourceUtils.getFile("classpath:static/SIM.png").getPath();
-            imageSignee2 = Image.getInstance(imagePathSign2);
+            String imagePathSign2 = new ClassPathResource("/static/SIM.png").getPath();
+            imageSignee2 = Image.getInstance(getByte("/static/SIM.png"));
             imageSignee2.setAlignment(Element.ALIGN_CENTER);
             imageSignee2.setScaleToFitHeight(true);
         } catch (FileNotFoundException e) {
@@ -477,6 +475,24 @@ public class PDFReportGenerator {
                     table.addCell(header);
                 });
     }
+
+    private static byte[] getByte(String path){
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        InputStream is=new PDFReportGenerator().getClass().getResourceAsStream(path);
+        int nRead;
+        byte[] data = new byte[1638];
+        while (true) {
+               try {
+                       if (!((nRead = is.read(data, 0, data.length)) != -1)) break;
+                           buffer.write(data, 0, nRead);
+                    } catch (IOException e) {
+                          e.printStackTrace();
+               }
+        }
+
+        return buffer.toByteArray();
+    }
+
 
 
 }

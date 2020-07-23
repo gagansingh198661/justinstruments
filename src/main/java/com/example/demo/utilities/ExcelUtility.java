@@ -190,7 +190,7 @@ public class ExcelUtility {
             } else if (param.equals(Constants.DUE_DATE_MASTER)) {
 
                 if(!value.isEmpty()){
-                    SimpleDateFormat formatter4=new SimpleDateFormat("MMM dd,yyyy");
+                    SimpleDateFormat formatter4=new SimpleDateFormat("dd-MMM-yyyy");
                     Date date1=formatter4.parse(value);
                     mInstrument.setDueDate(date1);
                 }
