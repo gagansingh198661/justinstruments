@@ -1,5 +1,6 @@
 package com.example.demo.utilities;
 
+import com.example.demo.controllers.MainController;
 import com.example.demo.dtos.ResponseDTO;
 import com.example.demo.entities.Client;
 import com.example.demo.entities.ExcelResult;
@@ -12,6 +13,7 @@ import com.example.demo.services.ExcelService;
 import com.example.demo.services.InstrumentService;
 import com.example.demo.services.MasterInstrumentsService;
 
+import javafx.scene.control.Alert;
 import org.slf4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.LoggerFactory;
@@ -162,8 +164,20 @@ public class ExcelUtility {
                 int index = 0;
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    String value = cell.toString();
+                    String type=null;
+                    String value = null;
                     String param = indexParameterMap.get(index);
+                    if(cell.getCellType()==CellType.NUMERIC){
+                        int value1=(int)cell.getNumericCellValue();
+                        type="numeric";
+                        value=value1+"";
+                    }else{
+                        type="string";
+                        value = cell.toString();
+                    }
+                    if(param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)){
+                        value=cell.toString();
+                    }
                     if (param != null) {
                         index++;
                         mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
@@ -177,10 +191,12 @@ public class ExcelUtility {
 
     private static MasterInstruments constructMasterInstrumentObject(String value, String param, MasterInstruments mInstrument) {
         try{
-            if (param.equals(Constants.INSTRUMENT_SR_NO_MASTER)&&!value.isEmpty()) {
-                mInstrument.setInstrumentSerialNo(value.substring(0,value.indexOf(".")));
-            } else if (param.equals(Constants.ASSET_NO_MASTER)&&!value.isEmpty()) {
-                mInstrument.setAsset_no(Long.valueOf(value.substring(0,value.indexOf("."))));
+
+            if (param.equals(Constants.INSTRUMENT_SR_NO_MASTER)) {
+                mInstrument.setInstrumentSerialNo(value);
+            }
+            else if (param.equals(Constants.ASSET_NO_MASTER)&&!value.isEmpty()) {
+                mInstrument.setAsset_no(Long.valueOf(value));
             } else if (param.equals(Constants.INSTRUMENT)) {
                 mInstrument.setDescription(value);
             } else if (param.equals(Constants.MAKE)) {
@@ -188,21 +204,25 @@ public class ExcelUtility {
             } else if (param.equals(Constants.MODEL)) {
                 mInstrument.setModel(value);
             } else if (param.equals(Constants.DUE_DATE_MASTER)) {
-
                 if(!value.isEmpty()){
                     SimpleDateFormat formatter4=new SimpleDateFormat("dd-MMM-yyyy");
-                    Date date1=formatter4.parse(value);
-                    mInstrument.setDueDate(date1);
+                    try {
+                        Date date1 = formatter4.parse(value);
+                        mInstrument.setDueDate(date1);
+                    }catch(Exception e){
+                        Utility.showPopup(Alert.AlertType.ERROR,"Incorrect Date in Due Date Column Format : Enter Date With Correct Format Like : \"April 3,2021");
+                    }
                 }
-            } else if (param.equals(Constants.CAL_DATE_MASTER)) {
-
+            } /*else if (param.equals(Constants.CAL_DATE_MASTER)) {
                 if(!value.isEmpty()){
                     SimpleDateFormat formatter4=new SimpleDateFormat("MMM dd,yyyy");
                     Date date1=formatter4.parse(value);
                     mInstrument.setCalDate(date1);
                 }
-            }
+            }*/
         }catch(Exception e){
+            LOGGER.error("Error in Master Instruments Sheet for value :"+value+"  param: "+param);
+            Utility.showPopup(Alert.AlertType.ERROR,"");
             System.out.println("Error for value :"+value+"  param: "+param);
             e.printStackTrace();
         }
@@ -217,7 +237,6 @@ public class ExcelUtility {
                 client.setAddress(value);
             } else if (param.equals(Constants.CLIENT_EMAIL)) {
                 client.setEmail(value);
-
             } else if (param.equals(Constants.CLIENT_PHONE)) {
                 client.setPhone(value);
             } else if (param.equals(Constants.CLIENT_FAX)) {
@@ -258,15 +277,23 @@ public class ExcelUtility {
               } else if (param.equals(Constants.LOCATION)) {
                 instrument.setLocation(value);
             } else if (param.equals(Constants.INSTRUMENT_SERIAL_NO)&&!value.isEmpty()) {
-                instrument.setInstrumentSerialNo(value.substring(0,value.indexOf(".")));
+                instrument.setInstrumentSerialNo(value);
             } else if(param.equals(Constants.RANGE)){
                 instrument.setRanges(value);
             } else if(param.equals(Constants.REMARKS)){
                 instrument.setRemarks(value);
             }
-        }catch(Exception e){
-            System.out.println("Error for value :"+value+"  param: "+param);
-            e.printStackTrace();
+        }catch(Exception e) {
+
+             if (!value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
+                Utility.showPopup(Alert.AlertType.ERROR, "Incorrect Date value or Format in Instrument Sheet " +value+"  in Due Date Column  : Enter Date With Correct Format Like : \"April 3,2021");
+             }else if (value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
+
+             }
+             else {
+                 Utility.showPopup(Alert.AlertType.ERROR, "Error for value : " + value + "  param: " + param);
+             }
+
         }
 
 
@@ -315,7 +342,8 @@ public class ExcelUtility {
     private static ExcelResult getsheetDto(List<ExcelResult> resultDtoList, String sheetName) {
         //ExcelResultDto result=new ExcelResultDto();
         for(ExcelResult resultDto:resultDtoList){
-            if(resultDto.getExcelName().toLowerCase().equals(sheetName.trim().toLowerCase())){
+            String nameOfSheetProcessed=sheetName.trim();
+            if(resultDto.getExcelName().equalsIgnoreCase(nameOfSheetProcessed)){
                 return resultDto;
             }
         }

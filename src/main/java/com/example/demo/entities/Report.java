@@ -4,8 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.io.File;
-import java.sql.Blob;
+
 import java.util.Date;
 @Entity
 @Table(name="report")
@@ -28,20 +27,6 @@ public class Report {
     private String reportName;
     private Date reportCreationDate;
     private int clientId;
-
-
-    public Blob getReportBlob() {
-        return reportBlob;
-    }
-
-    public void setReportBlob(Blob reportBlob) {
-        this.reportBlob = reportBlob;
-    }
-
-    private Blob reportBlob;
-
-
-
 
     public String getClientName() {
         return clientName;

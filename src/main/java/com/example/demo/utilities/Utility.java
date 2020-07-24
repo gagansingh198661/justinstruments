@@ -46,7 +46,8 @@ public class Utility {
                         !label.getId().equalsIgnoreCase("manufacturer_2")&&
                         !label.getId().equalsIgnoreCase("model_no_2")&&
                                 !label.getId().equalsIgnoreCase("e_date_2")&&
-                        !label.getId().equalsIgnoreCase("serial_no_2")){
+                        !label.getId().equalsIgnoreCase("serial_no_2")&&
+                        !label.getId().equalsIgnoreCase("fax_label")){
                    return  showPopup();
                 }//
             }else if(object instanceof TextField) {

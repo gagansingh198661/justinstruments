@@ -3,9 +3,11 @@ package com.example.demo.controllers;
 
 import com.example.demo.dtos.*;
 import com.example.demo.entities.*;
+import com.example.demo.exceptions.ReportNotMadeException;
 import com.example.demo.repositories.*;
 import com.example.demo.services.*;
 import com.example.demo.utilities.*;
+
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,22 +15,18 @@ import javafx.collections.FXCollections;
 
 import javafx.event.ActionEvent;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
 import javafx.geometry.Pos;
-
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 import org.controlsfx.control.textfield.TextFields;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.io.*;
@@ -37,10 +35,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Component
 public class MainController  {
 
-    private static final Logger LOGGER = LogManager.getLogger(MainController.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MainController.class);
 
     @FXML
     private Tab settingsTab;
@@ -131,6 +131,8 @@ public class MainController  {
 
     @Autowired
     private ThreadUtility threadUtility;
+
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     public void initialize() {
         try {
@@ -328,20 +330,26 @@ public class MainController  {
     public void createReport(ActionEvent actionEvent) {
         try {
             if (validateForm()) {
-
                 ProgressIndicator pi = new ProgressIndicator();
                 VBox box = new VBox(pi);
                 box.setAlignment(Pos.CENTER);
                 root.getChildren().add(box);
-
                 Map<String, Map<String, String>> parameterMap = createParameterMap();
+                try {
                 ReportDetails reportDetails = PDFReportGenerator.generatePDF(parameterMap);
                 Report reportDTO = createReportDTO(reportDetails);
                 reportService.save(reportDTO);
+        }catch(Exception e){
+                if(e instanceof ReportNotMadeException) {
+                    Utility.showPopup(Alert.AlertType.ERROR,"Report Not Getting Created!!");
+                }
+                LOGGER.error("The Report was not saved in Database",e);
+        }
                 root.getChildren().remove(box);
                 resetForm();
             }
         }catch(Exception e){
+            LOGGER.error("Error While Creating Report : ");
             e.printStackTrace();
         }
 
@@ -373,6 +381,7 @@ public class MainController  {
                     textField.setValue(textField.getPromptText());
                 }
             }
+            instrument_serial_no_textfield.setText(instrument_serial_no_textfield.getPromptText());
             cal_date_dp.setValue(null);
         }
     }
@@ -510,8 +519,8 @@ public class MainController  {
 
 
         }catch (Exception e){
-            System.out.println(e);
-            throw  e;
+
+            LOGGER.error("Error : ",e);
         }
         return parameterMap;
 
@@ -597,13 +606,7 @@ public class MainController  {
         return Utility.validateMap(parameterMap);
     }
 
-    public void testConnection(ActionEvent actionEvent) {
-        if(ConnectionUtility.isConnectionTestOk()){
-            Utility.showPopup(Alert.AlertType.CONFIRMATION,"Connection Established");
-        }else{
-            Utility.showPopup(Alert.AlertType.ERROR,"Please check your Config file");
-        }
-    }
+
 
     private void addListenersToOutputColumns(){
         TextField[] outputFound=new TextField[5];
@@ -676,6 +679,7 @@ public class MainController  {
     private void checkIfAllLabelsHaveFilled(Label[] inputLabel) {
         try {
             double[] error=new double[5];
+
             error[0] = Double.valueOf(error_0_last.getText());
             error[1] = Double.valueOf(error_1_last.getText());
             error[2] = Double.valueOf(error_2_last.getText());
@@ -702,6 +706,11 @@ public class MainController  {
 
         }catch(Exception e){
             System.out.println(e);
+            if(e instanceof  NumberFormatException) {
+                LOGGER.debug("Error : ", e);
+            }else{
+                LOGGER.error("Error : ", e);
+            }
         }
     }
 
@@ -722,13 +731,15 @@ public class MainController  {
     }
 
     public void updateDatabase(ActionEvent actionEvent) {
-
-
         if(!filePath.getText().equalsIgnoreCase(Constants.FILEPATH)) {
-
-            File file = new File(filePath.getText());
-            excelUtility.updateDatabase(file);
-
+            try {
+                File file = new File(filePath.getText());
+                excelUtility.updateDatabase(file);
+                initialize();
+                Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated.");
+            }catch(Exception e){
+                Utility.showPopup(Alert.AlertType.ERROR,"Oops Something Went Wrong, maybe the file is open in Background ??");
+            }
         }
        //
     }

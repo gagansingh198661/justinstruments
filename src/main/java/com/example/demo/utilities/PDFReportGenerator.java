@@ -1,6 +1,6 @@
 package com.example.demo.utilities;
 
-import com.example.demo.dtos.ReportDTO;
+
 import com.example.demo.dtos.ReportDetails;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -9,7 +9,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import javafx.scene.control.Alert;
 import javafx.scene.text.TextAlignment;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
+
 
 
 import java.io.*;
@@ -283,7 +283,7 @@ public class PDFReportGenerator {
             imageSignee1.setScaleToFitHeight(true);
             failTable.addCell(imageSignee1);
 
-            String imagePathSign2 = new ClassPathResource("/static/SIM.png").getPath();
+
             imageSignee2 = Image.getInstance(getByte("/static/SIM.png"));
             imageSignee2.setAlignment(Element.ALIGN_CENTER);
             imageSignee2.setScaleToFitHeight(true);

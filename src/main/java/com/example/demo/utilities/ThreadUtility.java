@@ -1,10 +1,9 @@
 package com.example.demo.utilities;
 
-import com.example.demo.dtos.ReportDTO;
+import com.example.demo.entities.ApplicationProperty;
 import com.example.demo.entities.EmailRecipient;
 import com.example.demo.entities.Report;
-import com.example.demo.repositories.ConnectionUtility;
-import com.example.demo.repositories.ReportRepository;
+import com.example.demo.services.ApplicationPropertyService;
 import com.example.demo.services.EmailRecipientService;
 import com.example.demo.services.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,8 @@ import org.springframework.stereotype.Component;
 
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+
 @Component
 public class ThreadUtility {
 
@@ -25,14 +25,25 @@ public class ThreadUtility {
     @Autowired
     private EmailRecipientService emailRecipientService;
 
+    @Autowired
+    private ApplicationPropertyService applicationPropertyService;
+
     public   void checkForExpiryOfReports(){
        new Thread(()->{
             List<EmailRecipient> emailRecipientList=emailRecipientService.getAll();
             String[] emails=new String[emailRecipientList.size()];
             List<Report> reports=reportService.getReportsAboutToExpire();
-            String body="Your Equipment Will Expire in 1 Month";
+           if(reports.size()==0){
+               return;
+           }
+            int index=0;
+            for(EmailRecipient emailRec:emailRecipientList){
+                emails[index]=emailRec.getEmail();
+            }
+            Map<String,String> propertyMap=applicationPropertyService.getApplicationProperties();
+            String body="Instrument's Due Date will be Coming in 1 Month";
             for(Report reportDTO:reports){
-                 String result=emailUtility.sendMail("budsy.remo@gmail.com",emails,"Equipment Is Going To Expire",
+                 String result=emailUtility.sendMail(propertyMap.get("mail.smtp.user"),emails,"Equipment Is Going To Expire",
                         body,reportDTO);
                  if(result.equalsIgnoreCase("success")){
                      reportDTO.setReportSent(true);
