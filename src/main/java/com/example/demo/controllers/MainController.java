@@ -222,10 +222,7 @@ public class MainController  {
         password_txt.setText(propertiesMap.get("password"));
         port_txt.setText(propertiesMap.get("port"));
         reportText.setText(propertiesMap.get("report_path"));
-        /*ConnectionUtility.setDatabase(db_name_txt.getText());
-        ConnectionUtility.setPassword(password_txt.getText());
-        ConnectionUtility.setPort(port_txt.getText());
-        ConnectionUtility.setUsername(username_txt.getText());*/
+
     }
 
 

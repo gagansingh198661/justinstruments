@@ -60,14 +60,16 @@ public class ExcelUtility {
         int numOfSheets=  wb.getNumberOfSheets();
             for(int i=0;i<numOfSheets; i++) {
                 Sheet mySheet = wb.getSheetAt(i);
-                Collection collection=processResult(mySheet);
-                if(collection!=null){
-                    if(mySheet.getSheetName().equals(Constants.INSTRUMENT)){
-                        instrumentSet=(Set<Instrument>)collection;
-                    }else if(mySheet.getSheetName().equals(Constants.CLIENT)){
-                        clientList=(List<Client>)collection;
-                    }else {
-                        masterInstrumentList=(List<MasterInstruments>) collection;
+                if(mySheet!=null) {
+                    Collection collection = processResult(mySheet);
+                    if (collection != null) {
+                        if (mySheet.getSheetName().equals(Constants.INSTRUMENT)) {
+                            instrumentSet = (Set<Instrument>) collection;
+                        } else if (mySheet.getSheetName().equals(Constants.CLIENT)) {
+                            clientList = (List<Client>) collection;
+                        } else {
+                            masterInstrumentList = (List<MasterInstruments>) collection;
+                        }
                     }
                 }
             }
@@ -84,31 +86,35 @@ public class ExcelUtility {
     }
 
     private  Collection processResult(Sheet name) {
-        ExcelRepository repository=new ExcelRepository();
         List<ExcelResult> resultDtoList=excelService.findAll();
 
         List objectList = new LinkedList();
         objectList=getObjectsFromSheet( resultDtoList, name);
-        if(name.getSheetName().equals(Constants.INSTRUMENT)) {
-            Set<Instrument> instrumentSet = new HashSet();
-            instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null && ((Instrument) o).getInstrumentSerialNo() != null).collect(Collectors.toSet());
-            return instrumentSet;
+        if(objectList!=null) {
+            if (name.getSheetName().equals(Constants.INSTRUMENT)) {
+                Set<Instrument> instrumentSet = new HashSet();
+                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null && ((Instrument) o).getInstrumentSerialNo() != null).collect(Collectors.toSet());
+                return instrumentSet;
 
-        }else if(name.getSheetName().equals(Constants.CLIENT)){
-            List<Client> clientList = new LinkedList<>();
-            clientList= (List<Client>) objectList.stream().map(o->(Client)o).collect(Collectors.toList());
-            return clientList;
+            } else if (name.getSheetName().equals(Constants.CLIENT)) {
+                List<Client> clientList = new LinkedList<>();
+                clientList = (List<Client>) objectList.stream().map(o -> (Client) o).collect(Collectors.toList());
+                return clientList;
 
-        }else{
-            List<MasterInstruments> masterInstrumentsList=new LinkedList<>();
-            masterInstrumentsList=(List<MasterInstruments>) objectList.stream().map(o->(MasterInstruments)o).collect(Collectors.toList());
-            return masterInstrumentsList;
+            } else {
+                List<MasterInstruments> masterInstrumentsList = new LinkedList<>();
+                masterInstrumentsList = (List<MasterInstruments>) objectList.stream().map(o -> (MasterInstruments) o).collect(Collectors.toList());
+                return masterInstrumentsList;
+            }
         }
-
+        return null;
     }
 
     private static List getObjectsFromSheet( List<ExcelResult> resultDtoList, Sheet sheet) {
         ExcelResult currentSheetDto = getsheetDto(resultDtoList, sheet.getSheetName());
+        if(currentSheetDto==null){
+            return null;
+        }
         Iterator<Row> rowIterator = sheet.iterator();
         List objectList = new LinkedList();
         boolean indexOfParametersHaveBeenMade = false;
@@ -270,7 +276,9 @@ public class ExcelUtility {
             } else if (param.equals(Constants.DUE_DATE_HEADER)) {
 
                 if(!value.isEmpty()){
-                    SimpleDateFormat formatter4=new SimpleDateFormat("dd-MMM-yyyy");
+                    String dateString=checkDateFormatString(value);
+
+                    SimpleDateFormat formatter4=new SimpleDateFormat(dateString);
                     Date date1=formatter4.parse(value);
                     instrument.setDate(date1);
                 }
@@ -286,18 +294,33 @@ public class ExcelUtility {
         }catch(Exception e) {
 
              if (!value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
-                Utility.showPopup(Alert.AlertType.ERROR, "Incorrect Date value or Format in Instrument Sheet " +value+"  in Due Date Column  : Enter Date With Correct Format Like : \"April 3,2021");
+                //Utility.showPopup(Alert.AlertType.ERROR, "Incorrect Date value or Format in Instrument Sheet " +value+"  in Due Date Column  : Enter Date With Correct Format Like : \"April 3,2021");
              }else if (value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
 
-             }
+             }else if(param.equals(Constants.SR_NO)){}
+
              else {
-                 Utility.showPopup(Alert.AlertType.ERROR, "Error for value : " + value + "  param: " + param);
+                 //Utility.showPopup(Alert.AlertType.ERROR, "Error for value : " + value + "  param: " + param);
+
              }
 
         }
-
+        if(param.equalsIgnoreCase(Constants.INSTRUMENT_SERIAL_NO)&&value.isEmpty()){
+            return null;
+        }
 
         return instrument;
+    }
+
+    private static String checkDateFormatString(String value) {
+        String formatString=null;
+        if(value.indexOf("-")!=-1){
+            formatString="dd-MMM-yyyy";
+        }else if(value.indexOf(",")!=-1){
+            formatString="MMMM dd, yyyy";
+        }
+        return formatString;
+
     }
 
     private static String cleanLevel(String param) {
