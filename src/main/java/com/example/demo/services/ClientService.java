@@ -24,6 +24,7 @@ public class ClientService {
         try{
             for(Client client:clientList) {
                 try {
+
                     clientRepository.save(client);
                 }catch(Exception e){
 
