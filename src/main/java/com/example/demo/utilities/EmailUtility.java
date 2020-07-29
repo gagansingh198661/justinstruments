@@ -53,6 +53,7 @@ public class EmailUtility {
             for(String email:to){
                 Address address1 = new InternetAddress(email);
                 addresses[index]=address1;
+                index++;
             }
             Transport transport = mailSession.getTransport();
 

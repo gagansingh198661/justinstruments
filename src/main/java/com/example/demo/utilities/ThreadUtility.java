@@ -39,6 +39,7 @@ public class ThreadUtility {
             int index=0;
             for(EmailRecipient emailRec:emailRecipientList){
                 emails[index]=emailRec.getEmail();
+                index++;
             }
             Map<String,String> propertyMap=applicationPropertyService.getApplicationProperties();
             String body="Instrument's Due Date will be Coming in 1 Month";
