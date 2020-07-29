@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="SAVE-TO-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>E:/logs/justinstruments.log</file>
+        <file>/Users/kanwarjitdhanjal/Desktop/just instruments/logs/justinstruments.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
                 %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
             </Pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>E:/logs/archived/log_%d{dd-MM-yyyy}.log</fileNamePattern>
+            <fileNamePattern>/Users/kanwarjitdhanjal/Desktop/just instruments/logs/archived/log_%d{dd-MM-yyyy}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
             <totalSizeCap>100MB</totalSizeCap>
         </rollingPolicy>
