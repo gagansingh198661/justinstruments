@@ -264,7 +264,7 @@ public class MainController  {
                 manufacturerInstrument.setText(instrument.getMake());
                 modelInstrument.setText(instrument.getModel());
                 locationInstrument.setText(instrument.getLocation());
-
+                tag_no_text.setText(instrument.getTagNo());
                 ref_no.setText(instrument.getCal_ref_no());
                 serialNoInstrument.setText(instrument.getInstrumentSerialNo());
                 descriptionInstrument.setText(instrument.getDescription());
