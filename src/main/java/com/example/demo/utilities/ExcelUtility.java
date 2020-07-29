@@ -263,7 +263,6 @@ public class ExcelUtility {
             if (param.equals(Constants.TAG_NO)&&!value.isEmpty()) {
                 instrument.setTagNo(value);
             } else if (param.equals(Constants.SR_NO)&&!value.isEmpty()) {
-
                 instrument.setSerialNo(value.substring(0,value.indexOf(".")));
             } else if (param.equals(Constants.INSTRUMENT)) {
                 instrument.setDescription(value);
@@ -285,6 +284,9 @@ public class ExcelUtility {
               } else if (param.equals(Constants.LOCATION)) {
                 instrument.setLocation(value);
             } else if (param.equals(Constants.INSTRUMENT_SERIAL_NO)&&!value.isEmpty()) {
+                if(isANumber(value)){
+                    value=(Double.valueOf(value).intValue())+"";
+                }
                 instrument.setInstrumentSerialNo(value);
             } else if(param.equals(Constants.RANGE)){
                 instrument.setRanges(value);
@@ -310,6 +312,15 @@ public class ExcelUtility {
         }
 
         return instrument;
+    }
+
+    private static boolean isANumber(String value) {
+        try {
+            double value1 = Double.valueOf(value);
+        }catch(Exception e){
+            return false;
+        }
+        return true;
     }
 
     private static String checkDateFormatString(String value) {

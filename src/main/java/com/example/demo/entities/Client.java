@@ -26,9 +26,10 @@ public class Client {
         this.id = id;
     }
 
-    @Id
+
     private long id;
 
+    @Id
     private String name;
 
     private String description;
