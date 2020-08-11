@@ -188,10 +188,18 @@ public class MainController  {
             setInstrumentFieldSettings();
             rangeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
                 String rangeString = (String) rangeCombo.getValue();
-                String[] rangeArray = rangeString.split("-");
-                Double range = new Double(0);
-                if (rangeArray.length == 2) {
-                    range = Double.valueOf(rangeArray[1]);
+                String[] rangeArray = null;
+                String rangeNumStr="";
+                if(rangeString.indexOf("-")!=-1){
+                    rangeArray = rangeString.split("-");
+                    rangeNumStr=rangeArray[1];
+                }else{
+                    rangeNumStr=rangeString;
+                }
+                rangeArray=rangeNumStr.split(" ");
+                rangeNumStr=rangeArray[0];
+
+                    Double range = Double.valueOf(rangeNumStr);
                     input_4_found.setText(String.format("%.2f", range));
                     input_3_found.setText(String.format("%.2f", range * .75));
                     input_2_found.setText(String.format("%.2f", range * .5));
@@ -202,7 +210,7 @@ public class MainController  {
                     input_2_left.setText(String.format("%.2f", range * .5));
                     input_1_left.setText(String.format("%.2f", range * .25));
                     input_0_left.setText("0.00");
-                }
+
 
             });
             addListenersToOutputColumns();

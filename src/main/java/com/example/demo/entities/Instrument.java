@@ -13,11 +13,11 @@ public class Instrument {
 
     private String serialNo;
 
-    @NotNull
+    @Id
     @Column(name="tag_no")
     private String tagNo;
 
-    @Id
+
     @Column(name="instrument_serial_no")
     private String instrumentSerialNo;
 
