@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class PDFReportGenerator {
 
-
+public  static final float TABLEWIDTH=95f;
     public static ReportDetails generatePDF(Map<String, Map<String, String>> parameterMap) throws IOException {
         Document document = new Document();
         FileOutputStream directory=null;
@@ -96,14 +96,14 @@ public class PDFReportGenerator {
     private static PdfPTable createHeaderOfReportTable() throws IOException, DocumentException {
 
         PdfPTable headerTable=new PdfPTable(4);
-        headerTable.setWidthPercentage(90f);
-        headerTable.setWidths(new float[]{3,7f,0.1f,2.3f});
+        headerTable.setWidthPercentage(99f);
+        headerTable.setWidths(new float[]{3,6.8f,0.1f,2.7f});
 
         String imagePath=new ClassPathResource(
                 "/static/justinstruments.png").getPath();
         Image image1 = Image.getInstance(getByte("/static/justinstruments.png"));
         image1.setAlignment(Element.ALIGN_CENTER);
-        image1.scaleAbsolute(75, 85);
+        image1.scaleAbsolute(95, 95);
         headerTable.addCell(getCell(image1));
 
         PdfPTable addressTable=new PdfPTable(1);
@@ -112,14 +112,14 @@ public class PDFReportGenerator {
                 Phrase(
                         StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
                                 Constants.REPORT_TITLE_COMPANY_NAME.length()+2),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22))));
         addressTable.addCell(getCell(new
                 Phrase(
                 StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
                         Constants.REPORT_TITLE_COMPANY_ADDRESS.length()+6),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11))));
 
-        headerTable.addCell(getCell(addressTable));
+        headerTable.addCell((addressTable));
 
         PdfPTable emptyTable=new PdfPTable(1);
         emptyTable.addCell(getCell("",TextAlignment.CENTER));
@@ -127,16 +127,16 @@ public class PDFReportGenerator {
 
 
         PdfPTable contactsTable=new PdfPTable(1);
-        contactsTable.addCell(getCell(" ", TextAlignment.LEFT,6));
+        contactsTable.addCell(getCell(" ", TextAlignment.LEFT,8));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL1,
-                Constants.TEL1.length()+19),
-                TextAlignment.LEFT,7));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+25), TextAlignment.LEFT,7));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+25), TextAlignment.LEFT,7));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length()+16), TextAlignment.LEFT,7));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()+14), TextAlignment.LEFT,7));
+                Constants.TEL1.length()+3),
+                TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+3), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+3), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length()+2), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()), TextAlignment.LEFT,9));
        
-        headerTable.addCell(getCell(contactsTable));
+        headerTable.addCell((contactsTable));
         headerTable.setSpacingAfter(25);
         return headerTable;
     }
@@ -256,7 +256,7 @@ public class PDFReportGenerator {
 
     private static PdfPTable createEquipmentTable(Map<String, Map<String, String>> parameterMap) {
         PdfPTable mainTable=new PdfPTable(2);
-        mainTable.setWidthPercentage(90f);
+        mainTable.setWidthPercentage(TABLEWIDTH);
         PdfPTable firstTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_1),null);
         PdfPTable secondTable=useGenralLogicToCreateTable(2,parameterMap.get(Constants.EQUIPMENT_2),null);
 
@@ -278,7 +278,7 @@ public class PDFReportGenerator {
 
     private static PdfPTable createCalibrationReportTable1(Map<String, String> stringStringMap) {
         PdfPTable passedTable=new PdfPTable(3);
-        passedTable.setWidthPercentage(90f);
+        passedTable.setWidthPercentage(TABLEWIDTH);
         passedTable.addCell(getTableCell(Constants.PASSED));
         passedTable.addCell(getTableCell(Constants.FAILED));
         passedTable.addCell(getTableCell(Constants.COMMENTS));
@@ -289,7 +289,7 @@ public class PDFReportGenerator {
      }
     private static PdfPTable createCalibrationReportTable2(Map<String, String> stringStringMap) throws DocumentException {
         PdfPTable failTable=new PdfPTable(8);
-        failTable.setWidthPercentage(90f);
+        failTable.setWidthPercentage(TABLEWIDTH);
         failTable.setWidths(new float[]{2.5f,2,1,1,2,1.5f,1,1});
 
         failTable.addCell(getTableCell(Constants.CALIBRATION_BY));
@@ -331,7 +331,7 @@ public class PDFReportGenerator {
 
     private static PdfPTable createCalibrationResultsTable(Map<String, String> stringStringMap) {
         PdfPTable maintable=new PdfPTable(3);
-        maintable.setWidthPercentage(90f);
+        maintable.setWidthPercentage(TABLEWIDTH);
         try {
             maintable.setWidths(new float[]{0.8f,2.6f,2.6f});
         } catch (DocumentException e) {
@@ -439,6 +439,7 @@ public class PDFReportGenerator {
 
     private static PdfPTable createCustomerComplete(Map<String, String> parameterMap) throws DocumentException {
         PdfPTable pdfPTable=new PdfPTable(2);
+        pdfPTable.setWidthPercentage(TABLEWIDTH);
         pdfPTable.setWidths(new float[]{0.6f,3.4f});
         pdfPTable.addCell(getTableCell(Constants.CUSTOMER));
         pdfPTable.addCell(getTableCell(parameterMap.get(Constants.CUSTOMER)));
@@ -470,6 +471,7 @@ public class PDFReportGenerator {
     }
     private static PdfPTable useGenralLogicToCreateTable(int columns, Map<String, String> parameterMap,String tableName){
         PdfPTable pdfTable=new PdfPTable(columns);
+        pdfTable.setWidthPercentage(TABLEWIDTH);
         if(tableName!=null&&tableName.equalsIgnoreCase(Constants.CUSTOMER_BASIC)){
             try {
                 pdfTable.setWidths(new float[]{1.2f,3f,1,1.2f,1.5f,1.5f});
