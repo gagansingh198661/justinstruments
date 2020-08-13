@@ -111,4 +111,12 @@ public class Constants {
     public static final String TEMPERATUREANDSETTINGSTEXT = "TEMPERATUREANDSETTINGSTEXT";
     public static final String TEMPERATUREANDSETTINGSLABEL = "TEMPERATUREANDSETTINGSLABEL";
     public static final String TEMPERATUREANDSETTINGSMAP = "TEMPERATUREANDSETTINGSMAP";
+    public static final String TEL1="Tel: +1 289.632.3134";
+    public static final String TEL2="+1 647.834.7829";
+    public static final String TEL3="+1 877.525.7829";
+    public static final String FAXADD="Fax: +1 905.216.7829";
+    public static final String EMAILJI="kd@justinstruments.net";
+
+
+    public static final String CLIENT_NO = "NO.";
 }

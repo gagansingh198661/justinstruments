@@ -114,7 +114,7 @@
                                 <Label fx:id="description_1" layoutX="128.0" layoutY="213.0" prefHeight="17.0" prefWidth="105.0" text="..." />
                                 <Label fx:id="serial_no_1" layoutX="130.0" layoutY="264.0" prefHeight="17.0" prefWidth="105.0" text="..." />
                                 <Label fx:id="model_no_1" layoutX="129.0" layoutY="238.0" prefHeight="17.0" prefWidth="98.0" text="..." />
-                                <Label fx:id="e_date_1" layoutX="129.0" layoutY="287.0" prefHeight="17.0" prefWidth="69.0" text="..." />
+                                <Label fx:id="e_date_1" layoutX="129.0" layoutY="287.0" prefHeight="17.0" prefWidth="88.0" text="..." />
 
                                 <Label layoutX="250.0" layoutY="161.0" text="ASSET NO" />
                                 <TextField fx:id="asset_no_2" layoutX="329.0" layoutY="157.0" prefHeight="25.0" prefWidth="159.0" promptText="Asset No (OPTIONAL)" />
@@ -285,7 +285,7 @@
                                 <TextField fx:id="emailTextfiled" layoutX="425.0" layoutY="109.0" prefHeight="25.0" prefWidth="195.0" promptText="example@jg.com,eg2@jg.com" />
                                 <ComboBox fx:id="rangeCombo" layoutX="97.0" layoutY="442.0" prefHeight="25.0" prefWidth="120.0" promptText="Pick Range" />
                         <TextField fx:id="instrument_serial_no_textfield" layoutX="499.0" layoutY="347.0" prefHeight="25.0" prefWidth="139.0" promptText="Instrument Serial No." />
-                        <TextField id="settingsAtTestText" fx:id="settingsAtTestText" layoutX="329.0" layoutY="318.0" text="21.5 C,52%" />
+                        <TextField id="settingsAtTestText" fx:id="settingsAtTestText" layoutX="329.0" layoutY="318.0" text="21.5 C, 52%" />
 
                             </Pane>
                         </content>

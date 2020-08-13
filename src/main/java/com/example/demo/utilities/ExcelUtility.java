@@ -250,6 +250,8 @@ public class ExcelUtility {
             } else if (param.equals(Constants.CLIENT_DESCRIPTION)) {
                 client.setDescription(value);
                 //instrument.setD
+            }else if(param.equals(Constants.CLIENT_NO)){
+                client.setId(Double.valueOf(value).longValue());
             }
         }catch(Exception e){
             System.out.println("Error for value :"+value+"  param: "+param);

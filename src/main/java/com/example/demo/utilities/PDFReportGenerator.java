@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import javafx.scene.control.Alert;
 import javafx.scene.text.TextAlignment;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 
 
@@ -41,7 +42,7 @@ public class PDFReportGenerator {
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
             customerCompleteTable.setSpacingAfter(10);
 
-            Paragraph certificate_title_table = createHeaderTable(Constants.CERTIFICATE_OF_CALIBRATION,false);
+            Paragraph certificate_title_table = createHeaderTable(Constants.CERTIFICATE_OF_CALIBRATION,true);
             Paragraph test_equipment_title_table = createHeaderTable(Constants.TEST_EQUIPMENT_USED_FOR_CALIBRATION, true);
             Paragraph instrument_used_title_table = createHeaderTable(Constants.INSTRUMENT_IDENTIFICATION, true);
             Paragraph calibration_results_title_table = createHeaderTable(Constants.CALIBRATION_RESULTS, true);
@@ -94,8 +95,8 @@ public class PDFReportGenerator {
     }
     private static PdfPTable createHeaderOfReportTable() throws IOException, DocumentException {
 
-        PdfPTable headerTable=new PdfPTable(3);
-        headerTable.setWidths(new float[]{2,4,2.5f});
+        PdfPTable headerTable=new PdfPTable(4);
+        headerTable.setWidths(new float[]{2,6f,0.1f,2.3f});
 
         String imagePath=new ClassPathResource(
                 "/static/justinstruments.png").getPath();
@@ -106,17 +107,32 @@ public class PDFReportGenerator {
 
         PdfPTable addressTable=new PdfPTable(1);
 
-        addressTable.addCell(getCell(new Phrase(Constants.REPORT_TITLE_COMPANY_NAME, FontFactory.getFont(FontFactory.TIMES_ROMAN, 15))));
-        addressTable.addCell(getCell(Constants.REPORT_TITLE_COMPANY_ADDRESS,TextAlignment.CENTER,10));
+        addressTable.addCell(getCell(new
+                Phrase(
+                        StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
+                                Constants.REPORT_TITLE_COMPANY_NAME.length()+3),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18))));
+        addressTable.addCell(getCell(
+                StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
+                        Constants.REPORT_TITLE_COMPANY_ADDRESS.length()+5),
+                TextAlignment.CENTER,10));
         headerTable.addCell(getCell(addressTable));
 
-        PdfPTable contactsTable=new PdfPTable(1);
+        PdfPTable emptyTable=new PdfPTable(1);
+        emptyTable.addCell(getCell("",TextAlignment.CENTER));
+        headerTable.addCell(getCell(emptyTable));
 
-        contactsTable.addCell(getCell("  Tel: +1 289.632.3134", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("       +1 647.834.7829", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("       +1 877.525.7829", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("  Fax: +1 905.216.7829", TextAlignment.LEFT,8));
-        contactsTable.addCell(getCell("kd@justinstruments.net", TextAlignment.LEFT,8));
+
+        PdfPTable contactsTable=new PdfPTable(1);
+        contactsTable.addCell(getCell(" ", TextAlignment.LEFT,6));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL1,
+                Constants.TEL1.length()+35),
+                TextAlignment.LEFT,5));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+43), TextAlignment.LEFT,5));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+43), TextAlignment.LEFT,5));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length()+34), TextAlignment.LEFT,5));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()+30), TextAlignment.LEFT,5));
+       
         headerTable.addCell(getCell(contactsTable));
         headerTable.setSpacingAfter(25);
         return headerTable;
@@ -153,7 +169,7 @@ public class PDFReportGenerator {
         int i=0;
         for(File fName:files){
             String[] fileIndexes=fName.getName().split("_");
-            String strIndex="200";
+            String strIndex="0";
             if(fileIndexes.length>=2){
                 String lastString=fileIndexes[fileIndexes.length-1];
                 String[] prefixes=lastString.split("\\.");
@@ -216,7 +232,7 @@ public class PDFReportGenerator {
 
     private static PdfPCell getCell(String text_in_the_middle, TextAlignment center,int size) {
         PdfPCell cell = new PdfPCell();
-        cell.addElement(new Paragraph(text_in_the_middle,new Font(Font.FontFamily.COURIER, size, Font.BOLD )));
+        cell.addElement(new Paragraph(text_in_the_middle,new Font(Font.FontFamily.TIMES_ROMAN, size, Font.BOLD )));
         cell.setPadding(0);
 
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);

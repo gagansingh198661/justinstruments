@@ -34,6 +34,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,7 @@ public class MainController  {
                             description_1.setText(masterInstrument.getDescription());
                             model_no_1.setText(masterInstrument.getModel());
                             manufacturer_1.setText(masterInstrument.getMake());
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                            DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
                             String strDate = dateFormat.format(masterInstrument.getDueDate());
                             e_date_1.setText(strDate);
                         }
@@ -178,7 +179,7 @@ public class MainController  {
                             description_2.setText(masterInstrument.getDescription());
                             model_no_2.setText(masterInstrument.getModel());
                             manufacturer_2.setText(masterInstrument.getMake());
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+                            DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
                             String strDate = dateFormat.format(masterInstrument.getDueDate());
                             e_date_2.setText(strDate);
                         }
@@ -324,11 +325,27 @@ public class MainController  {
     public void initializeDueDate(ActionEvent actionEvent) {
 
         LocalDate date=cal_date_dp.getValue();
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+
         if(date!=null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+
             LocalDate duedate = date.plusMonths(Long.valueOf(frequency.getValue().toString()));
-            due_date.setText(duedate.toString());
-            date_heading_text.setText(date.toString());
+            Date dateDate=Date.from(duedate.atStartOfDay(defaultZoneId).toInstant());
+            String formattedDate = formatter.format(dateDate);
+            due_date.setText(formattedDate);
+            Date currentDate=Date.from(date.atStartOfDay(defaultZoneId).toInstant());
+            formattedDate=formatter.format(currentDate);
+            date_heading_text.setText(formattedDate);
         }
+    }
+
+    public String convertDate(LocalDate localDate,String format){
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        Date dateDate=Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
+        String formattedDate = formatter.format(dateDate);
+        return formattedDate;
     }
 
 
@@ -464,7 +481,7 @@ public class MainController  {
             instrumentMap.put(Constants.TOLERANCE, toleranceText.getText()+" %");
             instrumentMap.put(Constants.SERIAL_NO, serialNoInstrument.getText());
             if(cal_date_dp.getValue()!=null)
-            instrumentMap.put(Constants.CAL_DATE, cal_date_dp.getValue().toString());
+            instrumentMap.put(Constants.CAL_DATE, convertDate(cal_date_dp.getValue(),"MM-dd-yyyy"));
 
             String rangeString=(String)rangeCombo.getValue();
 
