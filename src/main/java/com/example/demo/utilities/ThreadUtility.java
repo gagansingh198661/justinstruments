@@ -30,28 +30,29 @@ public class ThreadUtility {
 
     public   void checkForExpiryOfReports(){
        new Thread(()->{
-            List<EmailRecipient> emailRecipientList=emailRecipientService.getAll();
-            String[] emails=new String[emailRecipientList.size()];
-            List<Report> reports=reportService.getReportsAboutToExpire();
-           if(reports.size()==0){
-               return;
+           while(true) {
+               List<EmailRecipient> emailRecipientList = emailRecipientService.getAll();
+               String[] emails = new String[emailRecipientList.size()];
+               List<Report> reports = reportService.getReportsAboutToExpire();
+               if (reports.size() == 0) {
+                   return;
+               }
+               int index = 0;
+               for (EmailRecipient emailRec : emailRecipientList) {
+                   emails[index] = emailRec.getEmail();
+                   index++;
+               }
+               Map<String, String> propertyMap = applicationPropertyService.getApplicationProperties();
+               String body = "Instrument's Due Date will be Coming in 1 Month";
+               for (Report reportDTO : reports) {
+                   String result = emailUtility.sendMail(propertyMap.get("mail.smtp.user"), emails, "Equipment Is Going To Expire",
+                           body, reportDTO);
+                   if (result.equalsIgnoreCase("success")) {
+                       reportDTO.setReportSent(true);
+                       reportService.save(reportDTO);
+                   }
+               }
            }
-            int index=0;
-            for(EmailRecipient emailRec:emailRecipientList){
-                emails[index]=emailRec.getEmail();
-                index++;
-            }
-            Map<String,String> propertyMap=applicationPropertyService.getApplicationProperties();
-            String body="Instrument's Due Date will be Coming in 1 Month";
-            for(Report reportDTO:reports){
-                 String result=emailUtility.sendMail(propertyMap.get("mail.smtp.user"),emails,"Equipment Is Going To Expire",
-                        body,reportDTO);
-                 if(result.equalsIgnoreCase("success")){
-                     reportDTO.setReportSent(true);
-                     reportService.save(reportDTO);
-                 }
-            }
-
         }).start();
     }
 }

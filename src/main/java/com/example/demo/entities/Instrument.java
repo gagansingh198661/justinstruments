@@ -17,7 +17,6 @@ public class Instrument {
     @Column(name="tag_no")
     private String tagNo;
 
-
     @Column(name="instrument_serial_no")
     private String instrumentSerialNo;
 

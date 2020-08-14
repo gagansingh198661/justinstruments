@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class PDFReportGenerator {
 
-public  static final float TABLEWIDTH=95f;
+    public  static final float TABLEWIDTH=110f;
     public static ReportDetails generatePDF(Map<String, Map<String, String>> parameterMap) throws IOException {
         Document document = new Document();
         FileOutputStream directory=null;
@@ -38,7 +38,7 @@ public  static final float TABLEWIDTH=95f;
             PdfPTable headerOfReport=createHeaderOfReportTable();
             PdfPTable customerBasicTable =createCustomerBasic(parameterMap.get(Constants.CUSTOMER_BASIC),Constants.CUSTOMER_BASIC);
             customerBasicTable.setSpacingAfter(15);
-            customerBasicTable.setSpacingBefore(10);
+            customerBasicTable.setSpacingBefore(15);
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
             customerCompleteTable.setSpacingAfter(10);
 
@@ -56,6 +56,8 @@ public  static final float TABLEWIDTH=95f;
             instrumentTable.setSpacingBefore(10);
             instrumentTable.setSpacingAfter(10);
 
+            parameterMap.get(Constants.CALIBRATION_RESULTS).
+                    put(Constants.UNIT,parameterMap.get(Constants.UNIT).get(Constants.UNIT));
             PdfPTable calibrationResultsTable=createCalibrationResultsTable(parameterMap.get(Constants.CALIBRATION_RESULTS));
             calibrationResultsTable.setSpacingBefore(15);
             calibrationResultsTable.setSpacingAfter(10);
@@ -96,14 +98,14 @@ public  static final float TABLEWIDTH=95f;
     private static PdfPTable createHeaderOfReportTable() throws IOException, DocumentException {
 
         PdfPTable headerTable=new PdfPTable(4);
-        headerTable.setWidthPercentage(99f);
-        headerTable.setWidths(new float[]{3f,7.5f,0.1f,2.8f});
+        headerTable.setWidthPercentage(TABLEWIDTH);
+        headerTable.setWidths(new float[]{3f,7.7f,0.1f,2.8f});
 
         String imagePath=new ClassPathResource(
                 "/static/justinstruments.png").getPath();
         Image image1 = Image.getInstance(getByte("/static/justinstruments.png"));
         image1.setAlignment(Element.ALIGN_CENTER);
-        image1.scaleAbsolute(100, 100);
+        image1.scaleAbsolute(115, 115);
         headerTable.addCell(getCell(image1));
 
         PdfPTable addressTable=new PdfPTable(1);
@@ -129,15 +131,16 @@ public  static final float TABLEWIDTH=95f;
         PdfPTable contactsTable=new PdfPTable(1);
         contactsTable.addCell(getCell(" ", TextAlignment.LEFT,8));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL1,
-                Constants.TEL1.length()+5),
+                Constants.TEL1.length()+7),
                 TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+12), TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+12), TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+7, TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+14), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+14), TextAlignment.LEFT,9));
+        contactsTable.addCell(
+                getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+16, TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()), TextAlignment.LEFT,9));
        
-        headerTable.addCell(getCell(contactsTable));
-        headerTable.setSpacingAfter(25);
+        headerTable.addCell((contactsTable));
+        headerTable.setSpacingAfter(5);
         return headerTable;
     }
 
@@ -337,7 +340,7 @@ public  static final float TABLEWIDTH=95f;
         } catch (DocumentException e) {
             e.printStackTrace();
         }
-        maintable.addCell(getTableCell("% FULL SCALE"));
+        maintable.addCell(addCellAtCenter("% FULL SCALE"));
 
         PdfPTable headerAsFoundTable=generateCalibrationResultsHeader("AS FOUND");
         maintable.addCell(getCell(headerAsFoundTable));
@@ -350,48 +353,48 @@ public  static final float TABLEWIDTH=95f;
 
         for(int i=0;i<101;i=i+25){
             if(i%25==0) {
-                firstColumn.addCell(getTableCell(i+""));
+                firstColumn.addCell(addCellAtCenter(i+""));
             }
         }
 
 
         PdfPTable inputColumn=new PdfPTable(1);
 
-        inputColumn.addCell(getTableCell(stringStringMap.get(Constants.FOUND_INPUT_0)));
-        inputColumn.addCell(getTableCell(stringStringMap.get(Constants.FOUND_INPUT_25)));
-        inputColumn.addCell(getTableCell(stringStringMap.get(Constants.FOUND_INPUT_50)));
-        inputColumn.addCell(getTableCell(stringStringMap.get(Constants.FOUND_INPUT_75)));
-        inputColumn.addCell(getTableCell(stringStringMap.get(Constants.FOUND_INPUT_100)));
+        inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_0)+" "+stringStringMap.get(Constants.UNIT)));
+        inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_25)));
+        inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_50)));
+        inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_75)));
+        inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_100)));
 
         PdfPTable outputColumnFound=new PdfPTable(1);
 
-        outputColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_OUTPUT_0)));
-        outputColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_OUTPUT_25)));
-        outputColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_OUTPUT_50)));
-        outputColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_OUTPUT_75)));
-        outputColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_OUTPUT_100)));
+        outputColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_OUTPUT_0)));
+        outputColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_OUTPUT_25)));
+        outputColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_OUTPUT_50)));
+        outputColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_OUTPUT_75)));
+        outputColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_OUTPUT_100)));
 
 
         PdfPTable errorColumnFound=new PdfPTable(1);
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_0)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_25)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_50)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_75)));
-        errorColumnFound.addCell(getTableCell(stringStringMap.get(Constants.FOUND_ERROR_100)));
+        errorColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_ERROR_0)));
+        errorColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_ERROR_25)));
+        errorColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_ERROR_50)));
+        errorColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_ERROR_75)));
+        errorColumnFound.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_ERROR_100)));
 
         PdfPTable outputColumnLeft=new PdfPTable(1);
-        outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_0)));
-        outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_25)));
-        outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_50)));
-        outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_75)));
-        outputColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LEFT_OUTPUT_100)));
+        outputColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LEFT_OUTPUT_0)));
+        outputColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LEFT_OUTPUT_25)));
+        outputColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LEFT_OUTPUT_50)));
+        outputColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LEFT_OUTPUT_75)));
+        outputColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LEFT_OUTPUT_100)));
 
         PdfPTable errorColumnLeft=new PdfPTable(1);
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_0)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_25)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_50)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_75)));
-        errorColumnLeft.addCell(getTableCell(stringStringMap.get(Constants.LAST_ERROR_100)));
+        errorColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LAST_ERROR_0)));
+        errorColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LAST_ERROR_25)));
+        errorColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LAST_ERROR_50)));
+        errorColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LAST_ERROR_75)));
+        errorColumnLeft.addCell(addCellAtCenter(stringStringMap.get(Constants.LAST_ERROR_100)));
 
         PdfPTable foundTable=new PdfPTable(1);
         PdfPTable tempFoundTable=new PdfPTable(3);
@@ -417,6 +420,12 @@ public  static final float TABLEWIDTH=95f;
         return maintable;
     }
 
+    private static PdfPCell addCellAtCenter(String text) {
+        PdfPCell cell=new PdfPCell(getTableCell(text));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        return cell;
+    }
+
     private static PdfPTable createInstrumentTable(Map<String, String> stringStringMap) {
         return useGenralLogicToCreateTable(4,stringStringMap,null);
     }
@@ -429,9 +438,9 @@ public  static final float TABLEWIDTH=95f;
         headingCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         headerAsLeftTable.addCell(headingCell);
         PdfPTable subHeaderAsLeftTable=new PdfPTable(3);
-        subHeaderAsLeftTable.addCell(getTableCell(Constants.INPUT));
-        subHeaderAsLeftTable.addCell(getTableCell(Constants.OUTPUT));
-        subHeaderAsLeftTable.addCell(getTableCell(Constants.ERROR));
+        subHeaderAsLeftTable.addCell(addCellAtCenter(Constants.INPUT));
+        subHeaderAsLeftTable.addCell(addCellAtCenter(Constants.OUTPUT));
+        subHeaderAsLeftTable.addCell(addCellAtCenter(Constants.ERROR));
         headerAsLeftTable.addCell(getCell(subHeaderAsLeftTable));
 
         return headerAsLeftTable;
@@ -441,6 +450,7 @@ public  static final float TABLEWIDTH=95f;
         PdfPTable pdfPTable=new PdfPTable(2);
         pdfPTable.setWidthPercentage(TABLEWIDTH);
         pdfPTable.setWidths(new float[]{0.6f,3.4f});
+
         pdfPTable.addCell(getTableCell(Constants.CUSTOMER));
         pdfPTable.addCell(getTableCell(parameterMap.get(Constants.CUSTOMER)));
         pdfPTable.addCell(getTableCell(Constants.ADDRESS));

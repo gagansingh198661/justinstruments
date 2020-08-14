@@ -71,7 +71,7 @@ public class Constants {
     public static final String CALIBRATION_BY = "CALIBRATION BY" ;
     public static final String SIGNEE = "Kanwar Dhanjal";
     public static final String CHECKED_BY_LABEL = "CHECKED BY";
-    public static final String SIGNEE_2="SIMRAN";
+    public static final String SIGNEE_2="SIM";
     public static final String SIGN="SIGN";
     public static final String CALIBRATION_REPORT1 = "CALIBRATION_REPORT1";
     public static final String CALIBRATION_REPORT2 = "CALIBRATION_REPORT2";
@@ -96,6 +96,7 @@ public class Constants {
     public static final String CLIENT_EMAIL = "CLIENT_EMAIL";
     public static final String CLIENT_FAX = "CLIENT_FAX";
     public static final String CLIENT_DESCRIPTION = "CLIENT_DESCRIPTION";
+    public static final String CLIENT_NO = "NO.";
 
     public static final String MASTER="MASTER";
     public static final String CLIENT ="CLIENT";
@@ -118,5 +119,5 @@ public class Constants {
     public static final String EMAILJI="kd@justinstruments.net";
 
 
-    public static final String CLIENT_NO = "NO.";
+    public static final String UNIT ="UNIT" ;
 }

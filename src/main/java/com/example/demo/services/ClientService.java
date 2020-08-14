@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import com.example.demo.controllers.MainController;
 import com.example.demo.entities.Client;
 import com.example.demo.repositories.ClientRepositoryInterface;
 import com.example.demo.utilities.Utility;
@@ -24,9 +23,9 @@ public class ClientService {
         try{
             for(Client client:clientList) {
                 try {
-                    clientRepository.save(client);
+                  client=  clientRepository.save(client);
                 }catch(Exception e){
-                    System.out.println(e);
+                    LOGGER.error("Error Occured while saving",e);
                 }
             }
         }catch(Exception e){
