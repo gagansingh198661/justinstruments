@@ -25,7 +25,7 @@ public class ClientService {
                 try {
                   client=  clientRepository.save(client);
                 }catch(Exception e){
-                    LOGGER.error("Error Occured while saving",e);
+                    LOGGER.error("Error Occured while saving", e);
                 }
             }
         }catch(Exception e){
