@@ -275,6 +275,8 @@ public class MainController  {
 
                         if(comboArray.length!=0) {
                             rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
+                            if(comboArray.length==1)
+                            rangeCombo.setValue(comboArray[0]);
                         }
                     }
                 }
@@ -799,5 +801,9 @@ public class MainController  {
     public void isAValidationReport(ActionEvent actionEvent) {
         Boolean isValidation=validationCheck.isSelected();
         parameterMap.put(Constants.ISVALIDATION,isValidation.toString());
+    }
+
+    public void clearForm(ActionEvent actionEvent) {
+        resetForm();
     }
 }

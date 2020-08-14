@@ -154,7 +154,7 @@ public class PDFReportGenerator {
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+14), TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+14), TextAlignment.LEFT,9));
         contactsTable.addCell(
-                getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+18, TextAlignment.LEFT,9));
+                getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length()+5), TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()), TextAlignment.LEFT,9));
        
         headerTable.addCell(getCell(contactsTable));
@@ -178,7 +178,7 @@ public class PDFReportGenerator {
             // fileName= directoryMap.get(Constants.CUSTOMER)+"_"+latest+".pdf";
             finalPath=generatedDirectory.getPath()+"//"+fileName;
         }else{
-            //fileName= directoryMap.get(Constants.CUSTOMER)+"_"+1+".pdf";
+
             finalPath=generatedDirectory.getPath()+"//"+fileName;
         }
         ReportDetails reportDetails=new ReportDetails();
