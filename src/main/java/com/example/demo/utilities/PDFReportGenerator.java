@@ -46,7 +46,7 @@ public class PDFReportGenerator {
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
             customerCompleteTable.setSpacingAfter(10);
             String titleStringCertificate="";
-            String titleStringTEST_EQUIPMENT_USED="";
+            String titleStringTEST_EQUIPMENT_USED=""   ;
             String titleResults="";
             String titleReport="";
             if(isValidation){
