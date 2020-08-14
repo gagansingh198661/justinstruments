@@ -97,13 +97,13 @@ public  static final float TABLEWIDTH=95f;
 
         PdfPTable headerTable=new PdfPTable(4);
         headerTable.setWidthPercentage(99f);
-        headerTable.setWidths(new float[]{3,6.8f,0.1f,2.7f});
+        headerTable.setWidths(new float[]{3f,7.5f,0.1f,2.8f});
 
         String imagePath=new ClassPathResource(
                 "/static/justinstruments.png").getPath();
         Image image1 = Image.getInstance(getByte("/static/justinstruments.png"));
         image1.setAlignment(Element.ALIGN_CENTER);
-        image1.scaleAbsolute(95, 95);
+        image1.scaleAbsolute(100, 100);
         headerTable.addCell(getCell(image1));
 
         PdfPTable addressTable=new PdfPTable(1);
@@ -111,15 +111,15 @@ public  static final float TABLEWIDTH=95f;
         addressTable.addCell(getCell(new
                 Phrase(
                         StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
-                                Constants.REPORT_TITLE_COMPANY_NAME.length()+2),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22))));
+                                Constants.REPORT_TITLE_COMPANY_NAME.length()),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 23))));
         addressTable.addCell(getCell(new
                 Phrase(
                 StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
-                        Constants.REPORT_TITLE_COMPANY_ADDRESS.length()+6),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11))));
+                        Constants.REPORT_TITLE_COMPANY_ADDRESS.length()),
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12))));
 
-        headerTable.addCell((addressTable));
+        headerTable.addCell(getCell(addressTable));
 
         PdfPTable emptyTable=new PdfPTable(1);
         emptyTable.addCell(getCell("",TextAlignment.CENTER));
@@ -129,14 +129,14 @@ public  static final float TABLEWIDTH=95f;
         PdfPTable contactsTable=new PdfPTable(1);
         contactsTable.addCell(getCell(" ", TextAlignment.LEFT,8));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL1,
-                Constants.TEL1.length()+3),
+                Constants.TEL1.length()+5),
                 TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+3), TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+3), TextAlignment.LEFT,9));
-        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length()+2), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+12), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+12), TextAlignment.LEFT,9));
+        contactsTable.addCell(getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+7, TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()), TextAlignment.LEFT,9));
        
-        headerTable.addCell((contactsTable));
+        headerTable.addCell(getCell(contactsTable));
         headerTable.setSpacingAfter(25);
         return headerTable;
     }
@@ -487,7 +487,7 @@ public  static final float TABLEWIDTH=95f;
     }
 
     private static  Phrase getTableCell(String text){
-        return new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 8));
+        return new Phrase(text, FontFactory.getFont(FontFactory.HELVETICA, 10));
     }
 
     private static void addTableHeader(PdfPTable table) {
