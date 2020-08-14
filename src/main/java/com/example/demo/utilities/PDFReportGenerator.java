@@ -34,19 +34,37 @@ public class PDFReportGenerator {
 
             PdfWriter.getInstance(document, directory);
             document.open();
+            Map<String,String> validationFlagMap=parameterMap.get(Constants.ISVALIDATION);
+            boolean isValidation=Boolean.valueOf(validationFlagMap.get(Constants.ISVALIDATION));
+
+
 
             PdfPTable headerOfReport=createHeaderOfReportTable();
             PdfPTable customerBasicTable =createCustomerBasic(parameterMap.get(Constants.CUSTOMER_BASIC),Constants.CUSTOMER_BASIC);
             customerBasicTable.setSpacingAfter(15);
-            customerBasicTable.setSpacingBefore(15);
+            customerBasicTable.setSpacingBefore(25);
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
             customerCompleteTable.setSpacingAfter(10);
-
-            Paragraph certificate_title_table = createHeaderTable(Constants.CERTIFICATE_OF_CALIBRATION,true);
-            Paragraph test_equipment_title_table = createHeaderTable(Constants.TEST_EQUIPMENT_USED_FOR_CALIBRATION, true);
+            String titleStringCertificate="";
+            String titleStringTEST_EQUIPMENT_USED="";
+            String titleResults="";
+            String titleReport="";
+            if(isValidation){
+                titleStringCertificate=Constants.CERTIFICATE_OF_VALIDATION;
+                titleStringTEST_EQUIPMENT_USED=Constants.TEST_EQUIPMENT_USED_FOR_VALIDATION;
+                titleResults=Constants.VALIDATION_RESULTS;
+                titleReport=Constants.VALIDATION_REPORT;
+            }else{
+                titleStringCertificate=Constants.CERTIFICATE_OF_CALIBRATION;
+                titleStringTEST_EQUIPMENT_USED=Constants.TEST_EQUIPMENT_USED_FOR_CALIBRATION;
+                titleResults=Constants.CALIBRATION_RESULTS;
+                titleReport=Constants.CALIBRATION_REPORT;
+            }
+            Paragraph certificate_title_table = createHeaderTable(titleStringCertificate,true);
+            Paragraph test_equipment_title_table = createHeaderTable(titleStringTEST_EQUIPMENT_USED, true);
             Paragraph instrument_used_title_table = createHeaderTable(Constants.INSTRUMENT_IDENTIFICATION, true);
-            Paragraph calibration_results_title_table = createHeaderTable(Constants.CALIBRATION_RESULTS, true);
-            Paragraph calibration_report_title_table = createHeaderTable(Constants.CALIBRATION_REPORT, true);
+            Paragraph calibration_results_title_table = createHeaderTable(titleResults, true);
+            Paragraph calibration_report_title_table = createHeaderTable(titleReport, true);
 
             PdfPTable equipmentTable=createEquipmentTable(parameterMap);
             equipmentTable.setSpacingBefore(15);
@@ -114,12 +132,12 @@ public class PDFReportGenerator {
                 Phrase(
                         StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
                                 Constants.REPORT_TITLE_COMPANY_NAME.length()),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 23))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25))));
         addressTable.addCell(getCell(new
                 Phrase(
                 StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
                         Constants.REPORT_TITLE_COMPANY_ADDRESS.length()),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13))));
 
         headerTable.addCell(getCell(addressTable));
 
@@ -136,11 +154,11 @@ public class PDFReportGenerator {
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL2,Constants.TEL2.length()+14), TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.TEL3,Constants.TEL3.length()+14), TextAlignment.LEFT,9));
         contactsTable.addCell(
-                getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+16, TextAlignment.LEFT,9));
+                getCell(StringUtils.leftPad(Constants.FAXADD,Constants.FAXADD.length())+18, TextAlignment.LEFT,9));
         contactsTable.addCell(getCell(StringUtils.leftPad(Constants.EMAILJI,Constants.EMAILJI.length()), TextAlignment.LEFT,9));
        
-        headerTable.addCell((contactsTable));
-        headerTable.setSpacingAfter(5);
+        headerTable.addCell(getCell(contactsTable));
+        headerTable.setSpacingAfter(1);
         return headerTable;
     }
 

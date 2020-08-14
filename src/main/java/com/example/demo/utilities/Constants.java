@@ -47,13 +47,9 @@ public class Constants {
     public static final String PASSED = "PASSED";
     public static final String FAILED = "FAILED";
     public static final String COMMENTS = "COMMENTS";
-    public static final String YES = "YES";
-    public static final String NO = "NO";
-    public static final String CALIBRATION_STICKER_APPLIED = "CALIBRATION STICKER APPLIED";
 
-    public static final String LABEL_CLIENT_NAME="Client Name";
-    public static final String LABEL_ADDRESS="Address";
-    public static final String LABEL_PHONE="Phone";
+
+
     public static final String JUST_REF_NO = "JUST REF NO.";
     public static final String DATE = "DATE";
 
@@ -77,7 +73,7 @@ public class Constants {
     public static final String CALIBRATION_REPORT2 = "CALIBRATION_REPORT2";
     public static final String TEST_EQUIPMENT_USED_FOR_CALIBRATION="TEST EQUIPMENT USED FOR CALIBRATION";
     public static final String INSTRUMENT_IDENTIFICATION="INSTRUMENT IDENTIFICATION";
-    public static final String CALIBRATION_RESULTS_TILE="CALIBRATION RESULTS";
+
     public static final String CALIBRATION_REPORT="CALIBRATION REPORT";
     public static final String DIRECTORY="DIRECTORY";
 
@@ -115,9 +111,14 @@ public class Constants {
     public static final String TEL1="Tel: +1 289.632.3134";
     public static final String TEL2="+1 647.834.7829";
     public static final String TEL3="+1 877.525.7829";
-    public static final String FAXADD="Fax: +1 905.216.7829";
+    public static final String FAXADD="Fax:  +1 905.216.7829";
     public static final String EMAILJI="kd@justinstruments.net";
 
 
     public static final String UNIT ="UNIT" ;
+    public static final String ISVALIDATION = "ISVALIDATION";
+    public static final String CERTIFICATE_OF_VALIDATION = "CERTIFICATE OF VALIDATION";
+    public static final String TEST_EQUIPMENT_USED_FOR_VALIDATION = "TEST EQUIPMENT USED FOR VALIDATION";
+    public static final String VALIDATION_RESULTS = "VALIDATION RESULTS";
+    public static final String VALIDATION_REPORT = "VALIDATION REPORT";
 }
