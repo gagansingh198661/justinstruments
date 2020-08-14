@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,6 +41,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+
 @Component
 public class MainController  {
 
@@ -260,6 +264,10 @@ public class MainController  {
                         ref_no.setText(instrument.getCal_ref_no());
                         serialNoInstrument.setText(instrument.getInstrumentSerialNo());
                         descriptionInstrument.setText(instrument.getDescription());
+                        Date due_date_1=instrument.getDate();
+                        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+                        String strDate = dateFormat.format(due_date_1);
+                        due_date.setText(strDate);
                         String[] comboArray=instrument.getRanges().split(",");
                         List<String> comboList=Arrays.asList(comboArray).stream().map(input->{
                             String param=input;
@@ -302,6 +310,22 @@ public class MainController  {
                 if(comboArray.length!=0) {
                     rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
                 }
+            }
+        });
+        due_date.textProperty().addListener((observable, oldValue, newValue) -> {
+            String due_Date1=due_date.getText();
+            System.out.println(due_Date1);
+            try {
+                String format="MM-dd-yyyy";
+                Date date1=new SimpleDateFormat(format).parse(due_Date1);
+                LocalDate localDate = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                localDate.minusMonths(Long.valueOf((String) frequency.getValue()));
+                cal_date_dp.set(localDate);
+
+                date_heading_text.setText(convertDate(localDate,format));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -389,7 +413,7 @@ public class MainController  {
                     LOGGER.error("The Report was not saved in Database",e);
                 }
                 root.getChildren().remove(box);
-                resetForm();
+                // resetForm();
             }
         }catch(Exception e){
             LOGGER.error("Error While Creating Report : ");
@@ -704,9 +728,10 @@ public class MainController  {
         inputLastlabel[3]=input_3_left;
         inputLastlabel[4]=input_4_left;
 
-        List<Output> outputList=outputService.getAll();
+
         addListenersToAllText(outputFound, labelfoundArr, inputFoundlabel);
         addListenersToAllText(outputLast, errorlabel, inputLastlabel);
+        updateListenersToFillValueInOutPutFound(outputLast,outputFound);
     }
 
     private void addListenersToAllText(TextField[] outputFound, Label[] labelArr, Label[] inputLabel) {
@@ -727,6 +752,21 @@ public class MainController  {
                 }
             });
             i++;
+        }
+    }
+
+    private void updateListenersToFillValueInOutPutFound(TextField[] outputLast,  TextField[] outputFound) {
+        int i=0;
+        for(;i<outputLast.length;i++){
+            TextField tField=outputLast[i];
+            TextField tFoundField=outputFound[i];
+            tField.textProperty().addListener((observableValue, s, t1) -> {
+                if(Utility.isInputANumber(tField.getText())){
+                    tFoundField.setText(tField.getText());
+
+                }
+            });
+
         }
     }
 
