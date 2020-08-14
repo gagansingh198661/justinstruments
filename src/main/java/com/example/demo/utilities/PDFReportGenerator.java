@@ -378,6 +378,9 @@ public class PDFReportGenerator {
 
         PdfPTable inputColumn=new PdfPTable(1);
 
+        String symbol=stringStringMap.get(Constants.UNIT);
+        if(symbol.indexOf("?")!=-1)
+            symbol="\u00B0"+ symbol.substring(symbol.indexOf("?")+1);
         inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_0)+" "+stringStringMap.get(Constants.UNIT)));
         inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_25)));
         inputColumn.addCell(addCellAtCenter(stringStringMap.get(Constants.FOUND_INPUT_50)));

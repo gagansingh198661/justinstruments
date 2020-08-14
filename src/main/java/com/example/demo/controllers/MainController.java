@@ -36,6 +36,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Component
@@ -147,6 +149,7 @@ public class MainController  {
             for (Client client : clients) {
                 suggestion.add(client.getName());
             }
+
             TextFields.bindAutoCompletion(client_name_t, suggestion);
             client_name_t.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -258,6 +261,18 @@ public class MainController  {
                         serialNoInstrument.setText(instrument.getInstrumentSerialNo());
                         descriptionInstrument.setText(instrument.getDescription());
                         String[] comboArray=instrument.getRanges().split(",");
+                        List<String> comboList=Arrays.asList(comboArray).stream().map(input->{
+                            String param=input;
+                            if(input.indexOf("?")!=-1)
+                                input=input.substring(0,input.indexOf("?"))+"\u00B0"+ input.substring(input.indexOf("?")+1);
+                            return input;
+                        }).collect(Collectors.toList());
+                        int i=0;
+                        for(String com: comboList){
+                            comboArray[i]=com;
+                            i++;
+                        }
+
                         if(comboArray.length!=0) {
                             rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
                         }
@@ -281,6 +296,7 @@ public class MainController  {
                 serialNoInstrument.setText(instrument.getInstrumentSerialNo());
                 descriptionInstrument.setText(instrument.getDescription());
                 String[] comboArray=instrument.getRanges().split(",");
+
                 if(comboArray.length!=0) {
                     rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
                 }
@@ -768,7 +784,7 @@ public class MainController  {
                 File file = new File(filePath.getText());
                 excelUtility.updateDatabase(file);
                 initialize();
-                Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated.");
+                Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated. Please Restart The Application To See the Changes!!");
             }catch(Exception e){
                 Utility.showPopup(Alert.AlertType.ERROR,"Oops Something Went Wrong, maybe the file is open in Background ??");
             }
