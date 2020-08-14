@@ -21,6 +21,7 @@ public class ClientService {
 
     public void saveAll(List<Client> clientList){
         try{
+            clientRepository.deleteAll();
             for(Client client:clientList) {
                 try {
                   client=  clientRepository.save(client);

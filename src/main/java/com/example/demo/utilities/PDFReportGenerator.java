@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 public class PDFReportGenerator {
 
-    public  static final float TABLEWIDTH=110f;
+    public  static final float TABLEWIDTH=102f;
     public static ReportDetails generatePDF(Map<String, Map<String, String>> parameterMap) throws IOException {
         Document document = new Document();
         FileOutputStream directory=null;
@@ -42,7 +42,7 @@ public class PDFReportGenerator {
             PdfPTable headerOfReport=createHeaderOfReportTable();
             PdfPTable customerBasicTable =createCustomerBasic(parameterMap.get(Constants.CUSTOMER_BASIC),Constants.CUSTOMER_BASIC);
             customerBasicTable.setSpacingAfter(15);
-            customerBasicTable.setSpacingBefore(25);
+            customerBasicTable.setSpacingBefore(20);
             PdfPTable customerCompleteTable =createCustomerComplete(parameterMap.get(Constants.CUSTOMER_COMPLETE));
             customerCompleteTable.setSpacingAfter(10);
             String titleStringCertificate="";
@@ -132,12 +132,12 @@ public class PDFReportGenerator {
                 Phrase(
                         StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
                                 Constants.REPORT_TITLE_COMPANY_NAME.length()),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 25))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24))));
         addressTable.addCell(getCell(new
                 Phrase(
                 StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
                         Constants.REPORT_TITLE_COMPANY_ADDRESS.length()),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12))));
 
         headerTable.addCell(getCell(addressTable));
 
