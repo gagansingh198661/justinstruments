@@ -121,4 +121,6 @@ public class Constants {
     public static final String TEST_EQUIPMENT_USED_FOR_VALIDATION = "TEST EQUIPMENT USED FOR VALIDATION";
     public static final String VALIDATION_RESULTS = "VALIDATION RESULTS";
     public static final String VALIDATION_REPORT = "VALIDATION REPORT";
+
+    public static final String REPORT_NAME="REPORT_NAME";
 }

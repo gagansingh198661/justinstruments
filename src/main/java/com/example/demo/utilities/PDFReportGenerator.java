@@ -172,13 +172,13 @@ public class PDFReportGenerator {
         String finalPath="";
         generatedDirectory=generateFile(file);
         File[] files=generatedDirectory.listFiles();
-        String fileName="";
+        String fileName=parameterMap.get(Constants.REPORT_NAME).get(Constants.REPORT_NAME)+".pdf";
         if(files!=null&&files.length!=0){
-            int latest=getIndexOfLatestFile(files);
-            fileName= directoryMap.get(Constants.CUSTOMER)+"_"+latest+".pdf";
+           //int latest=getIndexOfLatestFile(files);
+            // fileName= directoryMap.get(Constants.CUSTOMER)+"_"+latest+".pdf";
             finalPath=generatedDirectory.getPath()+"//"+fileName;
         }else{
-            fileName= directoryMap.get(Constants.CUSTOMER)+"_"+1+".pdf";
+            //fileName= directoryMap.get(Constants.CUSTOMER)+"_"+1+".pdf";
             finalPath=generatedDirectory.getPath()+"//"+fileName;
         }
         ReportDetails reportDetails=new ReportDetails();
@@ -493,13 +493,7 @@ public class PDFReportGenerator {
         return useGenralLogicToCreateTable(6,parameterMap,tableName);
     }
 
-    private static PdfPTable useGeneralLogicCreateTableWithOnlyValues(Map<String, String> parameterMap){
-        PdfPTable pdfPTable=new PdfPTable(1);
-        for(Map.Entry<String, String> entry: parameterMap.entrySet()){
-            pdfPTable.addCell(getTableCell(entry.getValue()));
-        }
-        return pdfPTable;
-    }
+
     private static PdfPTable useGenralLogicToCreateTable(int columns, Map<String, String> parameterMap,String tableName){
         PdfPTable pdfTable=new PdfPTable(columns);
         pdfTable.setWidthPercentage(TABLEWIDTH);

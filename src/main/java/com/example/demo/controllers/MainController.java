@@ -566,6 +566,10 @@ public class MainController  {
             validationMap.put(Constants.ISVALIDATION,parameterMap.get(Constants.ISVALIDATION)==null?"false":parameterMap.get(Constants.ISVALIDATION));
             parameterReportMap.put(Constants.ISVALIDATION,validationMap);
 
+            Map<String,String> refNoMap=new HashMap<>();
+            refNoMap.put(Constants.REPORT_NAME,ref_no.getText());
+
+            parameterReportMap.put(Constants.REPORT_NAME,refNoMap);
         }catch (Exception e){
 
             LOGGER.error("Error : ",e);
