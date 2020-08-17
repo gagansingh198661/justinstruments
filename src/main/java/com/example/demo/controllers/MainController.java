@@ -36,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -314,14 +315,12 @@ public class MainController  {
         });
         due_date.textProperty().addListener((observable, oldValue, newValue) -> {
             String due_Date1=due_date.getText();
-            System.out.println(due_Date1);
             try {
                 String format="MM-dd-yyyy";
                 Date date1=new SimpleDateFormat(format).parse(due_Date1);
                 LocalDate localDate = date1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                localDate.minusMonths(Long.valueOf((String) frequency.getValue()));
-                cal_date_dp.set(localDate);
-
+                localDate=localDate.minusMonths(Long.valueOf((String) frequency.getValue()));
+                cal_date_dp.setValue(localDate);
                 date_heading_text.setText(convertDate(localDate,format));
 
             } catch (ParseException e) {

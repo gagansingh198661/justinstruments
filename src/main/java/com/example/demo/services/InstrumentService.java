@@ -5,6 +5,8 @@ import com.example.demo.entities.Instrument;
 import com.example.demo.repositories.InstrumentRepositoryInterface;
 import com.example.demo.utilities.ExcelUtility;
 
+import com.example.demo.utilities.Utility;
+import javafx.scene.control.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class InstrumentService {
             try {
                 instrumentRepository.save(instruemnt);
             }catch(Exception e){
+                if(instruemnt.getSerialNo().isEmpty()||instruemnt.getInstrumentSerialNo().equalsIgnoreCase("NA")){
+                    Utility.showPopup(Alert.AlertType.ERROR,"Error For instrument "+instruemnt.getTagNo()+ " The serialNo is not unique or is Blank!!");
+                }
                 LOGGER.error("Error Has Occured :",e);
             }
         }
