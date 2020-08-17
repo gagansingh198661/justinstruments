@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.MainController">
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.MainController">
     <children>
         <TabPane prefHeight="402.0" prefWidth="602.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1">
             <stylesheets>
@@ -14,7 +14,7 @@
             <tabs>
                 <Tab fx:id="settingsTab" text="Settings">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="753.0" prefWidth="643.0">
+                        <AnchorPane fx:id="anchorReportPane" minHeight="0.0" minWidth="0.0" prefHeight="753.0" prefWidth="643.0">
                             <children>
                                 <Pane layoutX="28.0" layoutY="117.0" prefHeight="193.0" prefWidth="603.0" styleClass="panelLabel">
                                     <children>
@@ -42,7 +42,7 @@
                                         </GridPane>
                                     </children>
                                 </Pane>
-                                <Pane layoutX="25.0" layoutY="320.0" prefHeight="320.0" prefWidth="655.0" styleClass="panelLabel">
+                                <Pane fx:id="databasePane" layoutX="25.0" layoutY="320.0" prefHeight="320.0" prefWidth="655.0" styleClass="panelLabel">
                                     <children>
                                         <GridPane layoutX="124.0" layoutY="76.0" prefHeight="135.0" prefWidth="352.0">
                                             <columnConstraints>
@@ -96,7 +96,7 @@
                     </content>
                 </Tab>
                 <Tab text="Report">
-                    <ScrollPane prefHeight="815.0" prefWidth="722.0">
+                    <ScrollPane fx:id="reportScrollPane" prefHeight="815.0" prefWidth="722.0">
                         <content>
                             <Pane minHeight="0.0" minWidth="0.0" prefHeight="818.0" prefWidth="746.0">
                                 <TextField fx:id="ref_no" layoutX="331.0" layoutY="33.0" prefHeight="27.0" prefWidth="109.0" />

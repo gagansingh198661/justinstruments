@@ -101,7 +101,7 @@ public class PDFReportGenerator {
             document.add(calibrationReportTable2);
             document.close();
 
-            Utility.showPopup(Alert.AlertType.CONFIRMATION, "Report Created In Directory");
+
 
         } catch (DocumentException e) {
             e.printStackTrace();

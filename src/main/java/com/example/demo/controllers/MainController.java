@@ -19,6 +19,8 @@ import javafx.fxml.FXML;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -58,6 +60,11 @@ public class MainController  {
 
     @FXML
     private Button updateDatabase;
+
+
+
+
+
 
     @FXML
     private Label customer_label,address_label,fax_label,settingsAtTestLabel;
@@ -142,6 +149,12 @@ public class MainController  {
 
     @FXML
     private CheckBox validationCheck;
+
+    @FXML
+    private ScrollPane reportScrollPane;
+
+    @FXML
+    private AnchorPane anchorReportPane;
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -395,6 +408,7 @@ public class MainController  {
 
     public void createReport(ActionEvent actionEvent) {
         try {
+
             if (validateForm()) {
                 ProgressIndicator pi = new ProgressIndicator();
                 VBox box = new VBox(pi);
@@ -405,9 +419,11 @@ public class MainController  {
                     ReportDetails reportDetails = PDFReportGenerator.generatePDF(parameterMap);
                     Report reportDTO = createReportDTO(reportDetails);
                     reportService.save(reportDTO);
+                    Utility.showPopup(Alert.AlertType.CONFIRMATION, "Report Created In Directory",reportScrollPane);
                 }catch(Exception e){
                     if(e instanceof ReportNotMadeException) {
-                        Utility.showPopup(Alert.AlertType.ERROR,"Report Not Getting Created!!");
+
+                        Utility.showPopup(Alert.AlertType.ERROR,"Report Not Getting Created!!",reportScrollPane);//,stage);
                     }
                     LOGGER.error("The Report was not saved in Database",e);
                 }
@@ -829,9 +845,9 @@ public class MainController  {
                 File file = new File(filePath.getText());
                 excelUtility.updateDatabase(file);
                 initialize();
-                Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated. Please Restart The Application To See the Changes!!");
+                Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated. Please Restart The Application To See the Changes!!",anchorReportPane);
             }catch(Exception e){
-                Utility.showPopup(Alert.AlertType.ERROR,"Oops Something Went Wrong, maybe the file is open in Background ??");
+                Utility.showPopup(Alert.AlertType.ERROR,"Oops Something Went Wrong, maybe the file is open in Background ??",anchorReportPane);
             }
         }
         //

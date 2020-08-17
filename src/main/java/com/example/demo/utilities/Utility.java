@@ -1,10 +1,13 @@
 package com.example.demo.utilities;
 
 import com.example.demo.controllers.MainController;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +28,10 @@ public class Utility {
         Alert alert = new Alert(type);
         alert.setTitle("Just Instruments");
         alert.setContentText(message);
+
         alert.showAndWait();
+
+
 
     }
     public static boolean isInputANumber(String input) {
@@ -74,5 +80,14 @@ public class Utility {
             }
         }
         return true;
+    }
+
+    public static void showPopup(Alert.AlertType type, String message, Region stage) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Just Instruments");
+        alert.setContentText(message);
+        alert.initOwner(stage.getScene().getWindow());
+        alert.showAndWait();
+
     }
 }
