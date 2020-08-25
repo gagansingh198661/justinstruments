@@ -883,6 +883,7 @@ public class MainController  {
                 initialize();
                 Utility.showPopup(Alert.AlertType.CONFIRMATION,"Success!! Database Updated. Please Restart The Application To See the Changes!!",anchorReportPane);
             }catch(Exception e){
+                LOGGER.error("Error Occured",e);
                 Utility.showPopup(Alert.AlertType.ERROR,"Oops Something Went Wrong, maybe the file is open in Background ??",anchorReportPane);
             }
         }

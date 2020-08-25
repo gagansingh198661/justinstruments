@@ -90,28 +90,32 @@ public class ExcelUtility {
     }
 
     private  Collection processResult(Sheet name) {
-        List<ExcelResult> resultDtoList=excelService.findAll();
+        try {
+            List<ExcelResult> resultDtoList = excelService.findAll();
 
-        List objectList = new LinkedList();
-        objectList=getObjectsFromSheet( resultDtoList, name);
-        if(objectList!=null) {
-            if (name.getSheetName().equals(Constants.CLIENT)) {
-                List<Client> clientList = new LinkedList<>();
-                clientList = (List<Client>) objectList.stream().map(o -> (Client) o).collect(Collectors.toList());
-                return clientList;
+            List objectList = new LinkedList();
+            objectList = getObjectsFromSheet(resultDtoList, name);
+            if (objectList != null) {
+                if (name.getSheetName().equals(Constants.CLIENT)) {
+                    List<Client> clientList = new LinkedList<>();
+                    clientList = (List<Client>) objectList.stream().map(o -> (Client) o).collect(Collectors.toList());
+                    return clientList;
 
 
+                } else if (name.getSheetName().equalsIgnoreCase(Constants.MASTER)) {
+                    List<MasterInstruments> masterInstrumentsList = new LinkedList<>();
+                    masterInstrumentsList = (List<MasterInstruments>) objectList.stream().map(o -> (MasterInstruments) o).collect(Collectors.toList());
+                    return masterInstrumentsList;
+                } else {
+                    Set<Instrument> instrumentSet = new HashSet();
+                    instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null).collect(Collectors.toSet());
+                    System.out.println(name);
+                    return instrumentSet;
 
-            } else if(name.getSheetName().equalsIgnoreCase(Constants.MASTER)){
-                List<MasterInstruments> masterInstrumentsList = new LinkedList<>();
-                masterInstrumentsList = (List<MasterInstruments>) objectList.stream().map(o -> (MasterInstruments) o).collect(Collectors.toList());
-                return masterInstrumentsList;
-            }else  {
-                Set<Instrument> instrumentSet = new HashSet();
-                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null ).collect(Collectors.toSet());
-                return instrumentSet;
-
+                }
             }
+        }catch(Exception e){
+            LOGGER.error("Error Occured at Sheet : "+name,e);
         }
         return null;
     }
