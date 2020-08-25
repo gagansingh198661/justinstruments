@@ -15,6 +15,7 @@ public class MasterInstrumentsService {
 
     public void saveAll(List<MasterInstruments> masterInstrumentsList){
         try {
+            if(masterInstrumentsList!=null&&!masterInstrumentsList.isEmpty())
             masterRepository.saveAll(masterInstrumentsList);
         }catch(Exception e){
             e.printStackTrace();

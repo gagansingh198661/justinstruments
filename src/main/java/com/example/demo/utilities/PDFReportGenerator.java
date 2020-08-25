@@ -6,7 +6,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import javafx.scene.control.Alert;
+
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -132,7 +132,7 @@ public class PDFReportGenerator {
                 Phrase(
                         StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_NAME,
                                 Constants.REPORT_TITLE_COMPANY_NAME.length()),
-                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24))));
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24,BaseColor.BLUE))));
         addressTable.addCell(getCell(new
                 Phrase(
                 StringUtils.leftPad(Constants.REPORT_TITLE_COMPANY_ADDRESS,
@@ -319,12 +319,13 @@ public class PDFReportGenerator {
 
         Image imageSignee2=null;
         try {
-            String imagePathSign1 =new ClassPathResource("/static/SIM.png").getPath();
+
             Image imageSignee1 = Image.getInstance(getByte("/static/KD.png"));
             //Image imageSignee1 = Image.getInstance(imagePathSign1);
             imageSignee1.setAlignment(Element.ALIGN_CENTER);
             imageSignee1.setScaleToFitHeight(true);
             failTable.addCell(imageSignee1);
+
 
 
             imageSignee2 = Image.getInstance(getByte("/static/SIM.png"));

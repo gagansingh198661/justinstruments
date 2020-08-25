@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.MainController">
+<StackPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.MainController">
     <children>
         <TabPane prefHeight="402.0" prefWidth="602.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1">
             <stylesheets>
@@ -200,10 +200,10 @@
                                             <rowConstraints>
                                                 <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
                                                 <RowConstraints maxHeight="28.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="34.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="34.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="33.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="34.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="34.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="33.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
                                                 <Label prefHeight="23.0" prefWidth="69.0" styleClass="panelLabel" text="INPUT" />
@@ -219,11 +219,6 @@
                                                 <TextField fx:id="output_2_found" styleClass="panelLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                 <TextField fx:id="output_3_found" styleClass="panelLabel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <TextField fx:id="output_4_found" styleClass="panelLabel" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                <Label fx:id="error_0_found" prefHeight="17.0" prefWidth="89.0" styleClass="panelLabel" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <Label fx:id="error_1_found" prefHeight="17.0" prefWidth="87.0" styleClass="panelLabel" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                                <Label fx:id="error_2_found" prefHeight="17.0" prefWidth="87.0" styleClass="panelLabel" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                                <Label fx:id="error_3_found" prefHeight="17.0" prefWidth="88.0" styleClass="panelLabel" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                                <Label fx:id="error_4_found" prefHeight="17.0" prefWidth="88.0" styleClass="panelLabel" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                                 <Label prefHeight="17.0" prefWidth="89.0" styleClass="panelLabel" text="INPUT" GridPane.columnIndex="3" />
                                                 <Label prefHeight="17.0" prefWidth="80.0" styleClass="panelLabel" text="OUTPUT" GridPane.columnIndex="4" />
                                                 <Label alignment="CENTER" prefHeight="17.0" prefWidth="59.0" text="ERROR" GridPane.columnIndex="5" />
@@ -237,11 +232,16 @@
                                                 <Label fx:id="input_3_left" alignment="CENTER" prefHeight="17.0" prefWidth="107.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                                                 <Label fx:id="input_2_left" alignment="CENTER" prefHeight="17.0" prefWidth="106.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                                 <Label fx:id="input_0_left" alignment="CENTER" prefHeight="17.0" prefWidth="107.0" styleClass="panelLabel" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                <Label fx:id="error_0_last" alignment="CENTER" prefHeight="17.0" prefWidth="53.0" styleClass="panelLabel" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                                <Label fx:id="error_1_last" alignment="CENTER" prefHeight="17.0" prefWidth="52.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                                                <Label fx:id="error_4_last" alignment="CENTER" prefHeight="17.0" prefWidth="53.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
-                                                <Label fx:id="error_3_last" alignment="CENTER" prefHeight="17.0" prefWidth="57.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-                                                <Label fx:id="error_2_last" alignment="CENTER" prefHeight="17.0" prefWidth="55.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                                    <TextField fx:id="error_0_found" alignment="CENTER" prefHeight="8.0" prefWidth="57.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <TextField fx:id="error_1_found" alignment="CENTER" prefHeight="17.0" prefWidth="51.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <TextField fx:id="error_2_found" alignment="CENTER" prefHeight="25.0" prefWidth="65.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                    <TextField fx:id="error_3_found" alignment="CENTER" prefHeight="25.0" prefWidth="58.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                    <TextField fx:id="error_4_found" alignment="CENTER" prefHeight="25.0" prefWidth="95.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                    <TextField fx:id="error_0_last" alignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                    <TextField fx:id="error_1_last" alignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                                    <TextField fx:id="error_2_last" alignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                                    <TextField fx:id="error_3_last" alignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                                    <TextField fx:id="error_4_last" alignment="CENTER" GridPane.columnIndex="5" GridPane.rowIndex="5" />
                                             </children>
                                         </GridPane>
                                         <GridPane gridLinesVisible="true" layoutX="75.0" layoutY="3.0" prefHeight="21.0" prefWidth="577.0">

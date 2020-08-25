@@ -45,7 +45,7 @@ public class ExcelUtility {
 
     public ResponseDTO updateDatabase(File file) {
         ResponseDTO responseDTO=new ResponseDTO();
-        Set<Instrument> instrumentSet=null;
+        Set<Instrument> instrumentSet=new HashSet<>();
         List<Client> clientList=null;
         List<MasterInstruments> masterInstrumentList=null;
 
@@ -61,12 +61,15 @@ public class ExcelUtility {
                 if(mySheet!=null) {
                     Collection collection = processResult(mySheet);
                     if (collection != null) {
-                        if (mySheet.getSheetName().equals(Constants.INSTRUMENT)) {
-                            instrumentSet = (Set<Instrument>) collection;
-                        } else if (mySheet.getSheetName().equals(Constants.CLIENT)) {
+                        if (mySheet.getSheetName().equals(Constants.CLIENT)) {
                             clientList = (List<Client>) collection;
-                        } else {
+
+                        } else if(mySheet.getSheetName().equalsIgnoreCase(Constants.MASTER)){
                             masterInstrumentList = (List<MasterInstruments>) collection;
+                        } else  {
+                            Set<Instrument> localInstrumentSet = (Set<Instrument>) collection;
+                            instrumentSet.addAll(localInstrumentSet);
+
                         }
                     }
                 }
@@ -89,20 +92,22 @@ public class ExcelUtility {
         List objectList = new LinkedList();
         objectList=getObjectsFromSheet( resultDtoList, name);
         if(objectList!=null) {
-            if (name.getSheetName().equals(Constants.INSTRUMENT)) {
-                Set<Instrument> instrumentSet = new HashSet();
-                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null && ((Instrument) o).getInstrumentSerialNo() != null).collect(Collectors.toSet());
-                return instrumentSet;
-
-            } else if (name.getSheetName().equals(Constants.CLIENT)) {
+            if (name.getSheetName().equals(Constants.CLIENT)) {
                 List<Client> clientList = new LinkedList<>();
                 clientList = (List<Client>) objectList.stream().map(o -> (Client) o).collect(Collectors.toList());
                 return clientList;
 
-            } else {
+
+
+            } else if(name.getSheetName().equalsIgnoreCase(Constants.MASTER)){
                 List<MasterInstruments> masterInstrumentsList = new LinkedList<>();
                 masterInstrumentsList = (List<MasterInstruments>) objectList.stream().map(o -> (MasterInstruments) o).collect(Collectors.toList());
                 return masterInstrumentsList;
+            }else  {
+                Set<Instrument> instrumentSet = new HashSet();
+                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null && ((Instrument) o).getInstrumentSerialNo() != null).collect(Collectors.toSet());
+                return instrumentSet;
+
             }
         }
         return null;
@@ -133,7 +138,45 @@ public class ExcelUtility {
 
     private static Object getObjectFromCell(String sheetName, ExcelResult currentSheetDto, Iterator<Cell> cellIterator) {
         Map<Integer, String> indexParameterMap = currentSheetDto.getHashmap();
-        if (sheetName.equals(Constants.INSTRUMENT)) {
+         if (sheetName.equals(Constants.MASTER)) {
+            MasterInstruments mInstrument = new MasterInstruments();
+            int index = 0;
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+                String type = null;
+                String value = null;
+                String param = indexParameterMap.get(index);
+                if (cell.getCellType() == CellType.NUMERIC) {
+                    int value1 = (int) cell.getNumericCellValue();
+                    type = "numeric";
+                    value = value1 + "";
+                } else {
+                    type = "string";
+                    value = cell.toString();
+                }
+                if (param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)) {
+                    value = cell.toString();
+                }
+                if (param != null) {
+                    index++;
+                    mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
+                }
+            }
+            return mInstrument;
+        } else if(sheetName.equals(Constants.CLIENT)){
+            Client client = new Client();
+            int index = 0;
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+                String value = cell.toString();
+                String param = indexParameterMap.get(index);
+                if (param != null) {
+                    index++;
+                    client = constructClientObject(value, param, client);
+                }
+            }
+            return client;
+        }else  {
             Instrument instrument = new Instrument();
             int index = 0;
             while (cellIterator.hasNext()) {
@@ -150,47 +193,7 @@ public class ExcelUtility {
                 }
             }
             return instrument;
-        } else if (sheetName.equals(Constants.CLIENT)) {
-            Client client = new Client();
-            int index = 0;
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-                String value = cell.toString();
-                String param = indexParameterMap.get(index);
-                if (param != null) {
-                    index++;
-                    client = constructClientObject(value, param, client);
-                }
-            }
-            return client;
-            }else if(sheetName.equals(Constants.MASTER)){
-                MasterInstruments mInstrument=new MasterInstruments();
-                int index = 0;
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    String type=null;
-                    String value = null;
-                    String param = indexParameterMap.get(index);
-                    if(cell.getCellType()==CellType.NUMERIC){
-                        int value1=(int)cell.getNumericCellValue();
-                        type="numeric";
-                        value=value1+"";
-                    }else{
-                        type="string";
-                        value = cell.toString();
-                    }
-                    if(param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)){
-                        value=cell.toString();
-                    }
-                    if (param != null) {
-                        index++;
-                        mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
-                    }
-                }
-                return mInstrument;
         }
-        return null;
-
     }
 
     private static MasterInstruments constructMasterInstrumentObject(String value, String param, MasterInstruments mInstrument) {
@@ -217,13 +220,7 @@ public class ExcelUtility {
                         Utility.showPopup(Alert.AlertType.ERROR,"Incorrect Date in Due Date Column Format : Enter Date With Correct Format Like : \"April 3,2021");
                     }
                 }
-            } /*else if (param.equals(Constants.CAL_DATE_MASTER)) {
-                if(!value.isEmpty()){
-                    SimpleDateFormat formatter4=new SimpleDateFormat("MMM dd,yyyy");
-                    Date date1=formatter4.parse(value);
-                    mInstrument.setCalDate(date1);
-                }
-            }*/
+            }
         }catch(Exception e){
             LOGGER.error("Error in Master Instruments Sheet for value :"+value+"  param: "+param);
             Utility.showPopup(Alert.AlertType.ERROR,"");
@@ -377,7 +374,11 @@ public class ExcelUtility {
         //ExcelResultDto result=new ExcelResultDto();
         for(ExcelResult resultDto:resultDtoList){
             String nameOfSheetProcessed=sheetName.trim();
-            if(resultDto.getExcelName().equalsIgnoreCase(nameOfSheetProcessed)){
+            String excelFromDTO=resultDto.getExcelName();
+            if(excelFromDTO.equalsIgnoreCase(nameOfSheetProcessed)){
+                return resultDto;
+            }else if(!nameOfSheetProcessed.equalsIgnoreCase(Constants.MASTER)&&!nameOfSheetProcessed.equalsIgnoreCase(Constants.CLIENT)
+                    &&!nameOfSheetProcessed.equalsIgnoreCase(Constants.INSTRUMENT)){
                 return resultDto;
             }
         }

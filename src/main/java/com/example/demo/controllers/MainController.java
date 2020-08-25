@@ -99,7 +99,7 @@ public class MainController  {
             input_0_left,input_1_left,input_2_left,input_3_left,input_4_left;
 
     @FXML
-    private Label error_0_found,error_1_found,error_2_found,error_3_found,error_4_found,
+    private TextField error_0_found,error_1_found,error_2_found,error_3_found,error_4_found,
             error_0_last,error_1_last,error_2_last,error_3_last,error_4_last;
 
     @FXML
@@ -716,13 +716,13 @@ public class MainController  {
         outputLast[3]=output_3_last;
         outputLast[4]=output_4_last;
 
-        Label[] labelfoundArr=new Label[5];
+        TextField[] labelfoundArr=new TextField[5];
         labelfoundArr[0]=error_0_found;
         labelfoundArr[1]=error_1_found;
         labelfoundArr[2]=error_2_found;
         labelfoundArr[3]=error_3_found;
         labelfoundArr[4]=error_4_found;
-        Label[] errorlabel=new Label[5];
+        TextField[] errorlabel=new TextField[5];
         errorlabel[0]=error_0_last;
         errorlabel[1]=error_1_last;
         errorlabel[2]=error_2_last;
@@ -747,23 +747,47 @@ public class MainController  {
         addListenersToAllText(outputFound, labelfoundArr, inputFoundlabel);
         addListenersToAllText(outputLast, errorlabel, inputLastlabel);
         updateListenersToFillValueInOutPutFound(outputLast,outputFound);
+        addListenersToErrorText(outputFound,labelfoundArr,inputFoundlabel);
+        addListenersToErrorText(outputLast,errorlabel,inputLastlabel);
     }
 
-    private void addListenersToAllText(TextField[] outputFound, Label[] labelArr, Label[] inputLabel) {
+    private void addListenersToErrorText(TextField[] outputFound, TextField[] textErr, Label[] inputlabel) {
+        int i=0;
+        for(TextField t:textErr){
+            final int  temp=i;
+            t.textProperty().addListener((observable -> {
+
+                if(!t.getText().isEmpty()&&Utility.isInputANumber(t.getText())&&
+                        !toleranceText.getText().isEmpty()&&Utility.isInputANumber(toleranceText.getText())&&
+                !inputlabel[temp].getText().isEmpty()){
+                    outputFound[temp].setText(getOutputOfTextField(t.getText(),inputlabel[temp].getText()));
+                }
+            }));
+            i++;
+        }
+    }
+
+    private String getOutputOfTextField(String error,String input){
+        double errD=Double.valueOf(error);
+        double inputD=Double.valueOf(input);
+        double result=(inputD+errD);
+        return String.format("%.2f", result);
+    }
+    private void addListenersToAllText(TextField[] outputFound, TextField[] labelArr, Label[] inputLabel) {
         int i=0;
         for(TextField tField:outputFound){
             Label output1=inputLabel[i];
-            Label label=labelArr[i];
+            TextField errorText=labelArr[i];
             tField.textProperty().addListener((observableValue, s, t1) -> {
                 if(Utility.isInputANumber(tField.getText())){
                     double value=Double.valueOf(tField.getText());
                     if(!output1.getText().isEmpty()) {
-                        String output = String.format("%.2f", value - Double.valueOf(output1.getText()));
-                        label.setText(output);
+                        //String output = String.format("%.2f", value - Double.valueOf(output1.getText()));
+                       // errorText.setText(output);
                         checkIfAllLabelsHaveFilled(inputLabel);
                     }
                 }else{
-                    label.setText("");
+                    errorText.setText("");
                 }
             });
             i++;
@@ -814,7 +838,7 @@ public class MainController  {
             }
 
         }catch(Exception e){
-            System.out.println(e);
+
             if(e instanceof  NumberFormatException) {
                 LOGGER.debug("Error : ", e);
             }else{
