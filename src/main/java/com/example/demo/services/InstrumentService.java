@@ -30,7 +30,7 @@ public class InstrumentService {
             try {
                 instrumentRepository.save(instruemnt);
             }catch(Exception e){
-                if(instruemnt.getSerialNo().isEmpty()||instruemnt.getInstrumentSerialNo().equalsIgnoreCase("NA")){
+                if(instruemnt.getSerialNo().isEmpty()){
                     Utility.showPopup(Alert.AlertType.ERROR,"Error For instrument "+instruemnt.getTagNo()+ " The serialNo is not unique or is Blank!!");
                 }
                 LOGGER.error("Error Has Occured :",e);

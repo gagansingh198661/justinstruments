@@ -284,7 +284,6 @@
                                 </GridPane>
                                 <TextField fx:id="emailTextfiled" layoutX="425.0" layoutY="109.0" prefHeight="25.0" prefWidth="195.0" promptText="example@jg.com,eg2@jg.com" />
                                 <ComboBox fx:id="rangeCombo" layoutX="97.0" layoutY="442.0" prefHeight="25.0" prefWidth="120.0" promptText="Pick Range" />
-                        <TextField fx:id="instrument_serial_no_textfield" layoutX="499.0" layoutY="347.0" prefHeight="25.0" prefWidth="139.0" promptText="Instrument Serial No." />
                         <TextField id="settingsAtTestText" fx:id="settingsAtTestText" layoutX="329.0" layoutY="318.0" text="21.5 C, 52%" />
                         <CheckBox fx:id="validationCheck" layoutX="13.0" layoutY="790.0" mnemonicParsing="false" onAction="#isAValidationReport" text="Validation Report" />
                         <Button fx:id="reserBtn" layoutX="376.0" layoutY="787.0" mnemonicParsing="false" onAction="#clearForm" prefHeight="26.0" prefWidth="80.0" text="Clear Form" />

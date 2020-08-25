@@ -111,7 +111,7 @@ public class MainController  {
     private Map<Object,String> parameterMap;
 
     @FXML
-    private TextField db_name_txt,username_txt,password_txt,port_txt,reportText,instrument_serial_no_textfield;
+    private TextField db_name_txt,username_txt,password_txt,port_txt,reportText;
 
     @FXML
     private Label passed_label,failed_label,comments_label,filePath;
@@ -215,14 +215,26 @@ public class MainController  {
                 String rangeString = (String) rangeCombo.getValue();
                 String[] rangeArray = null;
                 String rangeNumStr="";
-                if(rangeString.indexOf("-")!=-1){
+                if(rangeString.indexOf("(")!=-1&&rangeString.indexOf(")")!=-1){
+                    rangeString=rangeString.replaceAll("\\(","");
+                    rangeString=rangeString.replaceAll("\\)","");
+                }
+                if(rangeString.lastIndexOf("-")!=-1){
                     rangeArray = rangeString.split("-");
-                    rangeNumStr=rangeArray[1];
+                   if(rangeArray.length==3){
+                       rangeNumStr=rangeArray[2];
+                   }else {
+                       rangeNumStr = rangeArray[1];
+                   }
                 }else{
                     rangeNumStr=rangeString;
                 }
                 rangeArray=rangeNumStr.split(" ");
-                rangeNumStr=rangeArray[0];
+                if(rangeArray.length==2) {
+                    rangeNumStr = rangeArray[0];
+                }else{
+                    rangeNumStr = rangeArray[0];
+                }
                 parameterMap.put(Constants.UNIT,rangeArray[1]);
                 Double range = Double.valueOf(rangeNumStr);
                 input_4_found.setText(String.format("%.2f", range));
@@ -307,7 +319,7 @@ public class MainController  {
         instrumentListAll.stream().map(t->t.getInstrumentSerialNo()).forEach(
                 t->instrumentSerialStringList.add(t)
         );
-        TextFields.bindAutoCompletion(instrument_serial_no_textfield,instrumentSerialStringList);
+       /* TextFields.bindAutoCompletion(instrument_serial_no_textfield,instrumentSerialStringList);
         instrument_serial_no_textfield.textProperty().addListener((observable, oldValue, newValue) -> {
             List<Instrument> instrumentList=instrumentService.getInstrumentsBySerialNo(instrument_serial_no_textfield.getText()) ;
             if(instrumentList.size()!=0) {
@@ -325,7 +337,7 @@ public class MainController  {
                     rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
                 }
             }
-        });
+        });*/
         due_date.textProperty().addListener((observable, oldValue, newValue) -> {
             String due_Date1=due_date.getText();
             try {
@@ -463,7 +475,7 @@ public class MainController  {
                     textField.setValue(textField.getPromptText());
                 }
             }
-            instrument_serial_no_textfield.setText(instrument_serial_no_textfield.getPromptText());
+           // instrument_serial_no_textfield.setText(instrument_serial_no_textfield.getPromptText());
             cal_date_dp.setValue(null);
         }
     }

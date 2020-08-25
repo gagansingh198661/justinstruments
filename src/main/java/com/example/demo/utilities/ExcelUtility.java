@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -105,7 +108,7 @@ public class ExcelUtility {
                 return masterInstrumentsList;
             }else  {
                 Set<Instrument> instrumentSet = new HashSet();
-                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null && ((Instrument) o).getInstrumentSerialNo() != null).collect(Collectors.toSet());
+                instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null ).collect(Collectors.toSet());
                 return instrumentSet;
 
             }
@@ -114,25 +117,33 @@ public class ExcelUtility {
     }
 
     private static List getObjectsFromSheet( List<ExcelResult> resultDtoList, Sheet sheet) {
+
         ExcelResult currentSheetDto = getsheetDto(resultDtoList, sheet.getSheetName());
         if(currentSheetDto==null){
             return null;
         }
         Iterator<Row> rowIterator = sheet.iterator();
         List objectList = new LinkedList();
+
         boolean indexOfParametersHaveBeenMade = false;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
             Iterator<Cell> cellIterator = row.cellIterator();
             if (!indexOfParametersHaveBeenMade) {
+                try{
                 indexOfParametersHaveBeenMade = makeIndexOfParameter(cellIterator, currentSheetDto);
+                }catch(Exception e){
+                    LOGGER.error("Error occured",e);
+                }
             } else {
                 Object populatedObject = getObjectFromCell(sheet.getSheetName(), currentSheetDto, cellIterator);
                 if (populatedObject != null) {
                     objectList.add(populatedObject);
                 }
+
             }
         }
+
         return objectList;
     }
 
@@ -146,21 +157,22 @@ public class ExcelUtility {
                 String type = null;
                 String value = null;
                 String param = indexParameterMap.get(index);
-                if (cell.getCellType() == CellType.NUMERIC) {
-                    int value1 = (int) cell.getNumericCellValue();
-                    type = "numeric";
-                    value = value1 + "";
-                } else {
-                    type = "string";
-                    value = cell.toString();
-                }
-                if (param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)) {
-                    value = cell.toString();
-                }
-                if (param != null) {
-                    index++;
-                    mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
-                }
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        int value1 = (int) cell.getNumericCellValue();
+                        type = "numeric";
+                        value = value1 + "";
+                    } else {
+                        type = "string";
+                        value = cell.toString();
+                    }
+                    if (param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)) {
+                        value = cell.toString();
+                    }
+                    if (param != null) {
+                        index++;
+                        mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
+                    }
+
             }
             return mInstrument;
         } else if(sheetName.equals(Constants.CLIENT)){
@@ -180,12 +192,22 @@ public class ExcelUtility {
             Instrument instrument = new Instrument();
             int index = 0;
             while (cellIterator.hasNext()) {
+
                 Cell cell = cellIterator.next();
                 String value = cell.toString();
                 String param = indexParameterMap.get(index);
                 if (param != null) {
                     index++;
                     try {
+                        if(param.equalsIgnoreCase(Constants.TAG_NO)){
+                            if(Utility.isInputANumber(value)){
+                                DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+                                df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+
+                                value=new BigDecimal(value).toPlainString(); // Output: 0.00000021
+
+                            }
+                        }
                         instrument = constructInstrumentObject(value, param, instrument);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -282,7 +304,7 @@ public class ExcelUtility {
                 instrument.setLocation(value);
             } else if (param.equals(Constants.INSTRUMENT_SERIAL_NO)&&!value.isEmpty()) {
                 if(isANumber(value)){
-                    value=(Double.valueOf(value).intValue())+"";
+                    value=(Double.valueOf(value).longValue())+"";
                 }
                 instrument.setInstrumentSerialNo(value);
             } else if(param.equals(Constants.RANGE)){
@@ -303,9 +325,6 @@ public class ExcelUtility {
 
              }
 
-        }
-        if(param.equalsIgnoreCase(Constants.INSTRUMENT_SERIAL_NO)&&value.isEmpty()){
-            return null;
         }
 
         return instrument;
