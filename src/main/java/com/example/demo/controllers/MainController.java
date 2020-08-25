@@ -412,7 +412,7 @@ public class MainController  {
             if (validateForm()) {
                 ProgressIndicator pi = new ProgressIndicator();
                 VBox box = new VBox(pi);
-                box.setAlignment(Pos.CENTER);
+                 box.setAlignment(Pos.CENTER);
                 root.getChildren().add(box);
                 Map<String, Map<String, String>> parameterMap = createParameterMap();
                 try {
