@@ -123,4 +123,6 @@ public class Constants {
     public static final String VALIDATION_REPORT = "VALIDATION REPORT";
 
     public static final String REPORT_NAME="REPORT_NAME";
+
+    public static final String IGNORE_LINE="IGNORE_LINE";
 }

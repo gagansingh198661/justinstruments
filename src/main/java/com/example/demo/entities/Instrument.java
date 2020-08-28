@@ -13,7 +13,7 @@ public class Instrument {
 
     private String serialNo;
 
-    @Id
+
     @Column(name="tag_no")
     private String tagNo;
 
@@ -24,13 +24,14 @@ public class Instrument {
 
     private String model;
 
-    private String cal_ref_no;
+    @Id
+    @Column(name="cal_ref_no")
+    private String calRefNo;
 
     private Date date;
 
     private String remarks;
 
-    @NotNull
     private String location;
 
     public String getRanges() {
@@ -54,7 +55,26 @@ public class Instrument {
 
     private String description;
 
+    public long getClientId() {
+        return clientId;
+    }
 
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
+
+    private long clientId;
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    @Transient
+    private String clientName;
 
     public String getTagNo() {
         return tagNo;
@@ -123,12 +143,12 @@ public class Instrument {
         this.model = model;
     }
 
-    public String getCal_ref_no() {
-        return cal_ref_no;
+    public String getCalRefNo() {
+        return calRefNo;
     }
 
-    public void setCal_ref_no(String cal_ref_no) {
-        this.cal_ref_no = cal_ref_no;
+    public void setCalRefNo(String cal_ref_no) {
+        this.calRefNo = cal_ref_no;
     }
 
     public Date getDate() {

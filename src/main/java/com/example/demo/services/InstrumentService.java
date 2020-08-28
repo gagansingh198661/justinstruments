@@ -24,15 +24,13 @@ public class InstrumentService {
     @Autowired
     private InstrumentRepositoryInterface instrumentRepository;
 
-    public void saveAll(Set<Instrument> instrumentSet){
+    public void saveAll(List<Instrument> instrumentSet){
 
         for(Instrument instruemnt:instrumentSet) {
             try {
                 instrumentRepository.save(instruemnt);
             }catch(Exception e){
-                if(instruemnt.getSerialNo().isEmpty()){
-                    Utility.showPopup(Alert.AlertType.ERROR,"Error For instrument "+instruemnt.getTagNo()+ " The serialNo is not unique or is Blank!!");
-                }
+
                 LOGGER.error("Error Has Occured :",e);
             }
         }
@@ -56,7 +54,20 @@ public class InstrumentService {
         return new LinkedList<>();
     }
 
+    public Instrument getInstrumentByCalRefNo(String cal_ref){
+        try{
+            return instrumentRepository.findByCalRefNo(cal_ref);
+        }catch (Exception e){
+            LOGGER.error("Error for cal_ref :"+cal_ref,e);
+        }
+        return null;
+    }
+
     public  List<Instrument> findAll(){
         return instrumentRepository.findAll();
+    }
+
+    public List<Instrument> getInstrumentsByClientId(long clientId){
+        return instrumentRepository.findByClientId(clientId);
     }
 }

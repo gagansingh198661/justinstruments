@@ -4,7 +4,7 @@ package com.example.demo.controllers;
 import com.example.demo.dtos.*;
 import com.example.demo.entities.*;
 import com.example.demo.exceptions.ReportNotMadeException;
-import com.example.demo.repositories.*;
+
 import com.example.demo.services.*;
 import com.example.demo.utilities.*;
 
@@ -20,7 +20,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -38,7 +38,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,9 +122,6 @@ public class MainController  {
     private ApplicationPropertyService applicationPropertyService;
 
     @Autowired
-    private OutputService outputService;
-
-    @Autowired
     private ExcelUtility excelUtility;
 
     @Autowired
@@ -136,7 +132,7 @@ public class MainController  {
 
 
     @FXML
-    private ComboBox rangeCombo;
+    private ComboBox rangeCombo,address_combo;
 
     @Autowired
     private MasterInstrumentsService masterInstrumentsService;
@@ -156,23 +152,20 @@ public class MainController  {
     @FXML
     private AnchorPane anchorReportPane;
 
+    @Autowired
+    private FormFactory formFactory;
+
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     public void initialize() {
         try {
             initializeDBConnectionProperties();
             threadUtility.checkForExpiryOfReports();
-            List<Client> clients = getClients();
-            List suggestion = new LinkedList<String>();
-            for (Client client : clients) {
-                suggestion.add(client.getName());
-            }
-
-            TextFields.bindAutoCompletion(client_name_t, suggestion);
+            addClientsToClientNameTextField();
             client_name_t.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                    doSomething(clients);
+                    fillCustomerDetailsAndInstruments();
                 }
             });
             asset_no_1.textProperty().addListener(
@@ -211,45 +204,10 @@ public class MainController  {
             );
             setFrequency();
             setInstrumentFieldSettings();
-            rangeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-                String rangeString = (String) rangeCombo.getValue();
-                String[] rangeArray = null;
-                String rangeNumStr="";
-                if(rangeString.indexOf("(")!=-1&&rangeString.indexOf(")")!=-1){
-                    rangeString=rangeString.replaceAll("\\(","");
-                    rangeString=rangeString.replaceAll("\\)","");
-                }
-                if(rangeString.lastIndexOf("-")!=-1){
-                    rangeArray = rangeString.split("-");
-                   if(rangeArray.length==3){
-                       rangeNumStr=rangeArray[2];
-                   }else {
-                       rangeNumStr = rangeArray[1];
-                   }
-                }else{
-                    rangeNumStr=rangeString;
-                }
-                rangeArray=rangeNumStr.split(" ");
-                if(rangeArray.length==2) {
-                    rangeNumStr = rangeArray[0];
-                }else{
-                    rangeNumStr = rangeArray[0];
-                }
-                parameterMap.put(Constants.UNIT,rangeArray[1]);
-                Double range = Double.valueOf(rangeNumStr);
-                input_4_found.setText(String.format("%.2f", range));
-                input_3_found.setText(String.format("%.2f", range * .75));
-                input_2_found.setText(String.format("%.2f", range * .5));
-                input_1_found.setText(String.format("%.2f", range * .25));
-                input_0_found.setText("0.00");
-                input_4_left.setText(String.format("%.2f", range));
-                input_3_left.setText(String.format("%.2f", range * .75));
-                input_2_left.setText(String.format("%.2f", range * .5));
-                input_1_left.setText(String.format("%.2f", range * .25));
-                input_0_left.setText("0.00");
+            addListenerToCalRefNo();
+            addListenersToToleranceText();
+            addListenerToRangeCombo();
 
-
-            });
             addListenersToOutputColumns();
         }catch(Exception e){
             LOGGER.error("Error :  ",e);
@@ -257,6 +215,81 @@ public class MainController  {
         createFieldsMap();
     }
 
+    private void addListenerToRangeCombo() {
+        rangeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+            String rangeString = (String) rangeCombo.getValue();
+            String[] rangeArray = null;
+            String rangeNumStr="";
+            if(rangeString.indexOf("(")!=-1&&rangeString.indexOf(")")!=-1){
+                rangeString=rangeString.replaceAll("\\(","");
+                rangeString=rangeString.replaceAll("\\)","");
+            }
+            if(rangeString.lastIndexOf("-")!=-1){
+                rangeArray = rangeString.split("-");
+                if(rangeArray.length==3){
+                    rangeNumStr=rangeArray[2];
+                }else {
+                    rangeNumStr = rangeArray[1];
+                }
+            }else if(rangeString.indexOf("/")!=-1) {
+                rangeArray = rangeString.split("/");
+            }else{
+                rangeNumStr=rangeString;
+            }
+            rangeArray=rangeNumStr.split(" ");
+            rangeNumStr = rangeArray[0];
+            parameterMap.put(Constants.UNIT,rangeArray[1]);
+            setRangeForInputLabels(rangeNumStr);
+        });
+    }
+
+
+    private void addListenersToToleranceText() {
+        Label[] labelFound=new Label[5];
+        labelFound[0]=input_0_left;
+        labelFound[1]=input_1_left;
+        labelFound[2]=input_2_left;
+        labelFound[3]=input_3_left;
+        labelFound[4]=input_4_left;
+        toleranceText.textProperty().addListener( (observableValue, s, t1) -> {
+                checkIfAllLabelsHaveFilledAndSetWhetherWorkingOrNot(labelFound);
+            }
+        );
+    }
+
+    private void addListenerToCalRefNo() {
+        ref_no.textProperty().addListener(
+                (observableValue, s, t1) -> {
+                    String cal_ref_no_Str=ref_no.getText();
+                    FormDto dto=formFactory.getFormObject(Constants.CAL_REF_NO,cal_ref_no_Str);
+                    populateClientDetails(dto);
+                }
+        );
+    }
+
+    private void populateClientDetails(FormDto dto) {
+        client_name_t.setText(dto.getClientName());
+        String[] addresses=dto.getClientAddresses();
+        address_combo.setItems(FXCollections.observableList(Arrays.asList(addresses)));
+        if(addresses.length>0) {
+            addresses[0]=addresses[0].replaceAll("\n","");
+            address_combo.setValue(addresses[0]);
+        }
+        fax_label.setText(dto.getFax());
+        tag_no_text.setText(dto.getTagNo());
+        customer_label.setText(dto.getClientName());
+        emailTextfiled.setText(dto.getEmail());
+        phone_label.setText(dto.getPhone());
+    }
+
+    private void addClientsToClientNameTextField() {
+        List<Client> clients = getClients();
+        List suggestion = new LinkedList<String>();
+        for (Client client : clients) {
+            suggestion.add(client.getName());
+        }
+        TextFields.bindAutoCompletion(client_name_t, suggestion);
+    }
 
 
     private void initializeDBConnectionProperties() {
@@ -273,11 +306,11 @@ public class MainController  {
 
     private void setInstrumentFieldSettings() {
         List<String> instrumentStringList=new LinkedList<>();
-        List<Instrument> instrumentListAll=getInstruments();
+        List<Instrument> instrumentListAll=instrumentService.findAll();
         instrumentListAll.stream().map(t->t.getTagNo()).forEach(
                 t->instrumentStringList.add(t)
         );
-        TextFields.bindAutoCompletion(tag_no_text,instrumentStringList);
+        //TextFields.bindAutoCompletion(tag_no_text,instrumentStringList);
         tag_no_text.textProperty().addListener(
                 (observableValue, s, t1) -> {
                     List<Instrument> instrumentList=instrumentService.getInstruments(tag_no_text.getText()) ;
@@ -286,15 +319,14 @@ public class MainController  {
                         manufacturerInstrument.setText(instrument.getMake());
                         modelInstrument.setText(instrument.getModel());
                         locationInstrument.setText(instrument.getLocation());
-                        // rangeInstrument.setText(instrument.getLevel() + "");
-                        ref_no.setText(instrument.getCal_ref_no());
+                        ref_no.setText(instrument.getCalRefNo());
                         serialNoInstrument.setText(instrument.getInstrumentSerialNo());
                         descriptionInstrument.setText(instrument.getDescription());
                         Date due_date_1=instrument.getDate();
                         DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
                         String strDate = dateFormat.format(due_date_1);
                         due_date.setText(strDate);
-                        String[] comboArray=instrument.getRanges().split(",");
+                        String[] comboArray=instrument.getRanges().split("##");
                         List<String> comboList=Arrays.asList(comboArray).stream().map(input->{
                             String param=input;
                             if(input.indexOf("?")!=-1)
@@ -319,25 +351,6 @@ public class MainController  {
         instrumentListAll.stream().map(t->t.getInstrumentSerialNo()).forEach(
                 t->instrumentSerialStringList.add(t)
         );
-       /* TextFields.bindAutoCompletion(instrument_serial_no_textfield,instrumentSerialStringList);
-        instrument_serial_no_textfield.textProperty().addListener((observable, oldValue, newValue) -> {
-            List<Instrument> instrumentList=instrumentService.getInstrumentsBySerialNo(instrument_serial_no_textfield.getText()) ;
-            if(instrumentList.size()!=0) {
-                Instrument instrument = instrumentList.get(0);
-                manufacturerInstrument.setText(instrument.getMake());
-                modelInstrument.setText(instrument.getModel());
-                locationInstrument.setText(instrument.getLocation());
-                tag_no_text.setText(instrument.getTagNo());
-                ref_no.setText(instrument.getCal_ref_no());
-                serialNoInstrument.setText(instrument.getInstrumentSerialNo());
-                descriptionInstrument.setText(instrument.getDescription());
-                String[] comboArray=instrument.getRanges().split(",");
-
-                if(comboArray.length!=0) {
-                    rangeCombo.setItems(FXCollections.observableList(Arrays.asList(comboArray)));
-                }
-            }
-        });*/
         due_date.textProperty().addListener((observable, oldValue, newValue) -> {
             String due_Date1=due_date.getText();
             try {
@@ -365,25 +378,26 @@ public class MainController  {
         frequency.setValue(frequencyList.get(3));
     }
 
-    private List<Instrument> getInstruments(){
-        return instrumentService.findAll();
-    }
-
-
-
-    private void doSomething(List<Client> clients) {
-
+    private void fillCustomerDetailsAndInstruments() {
+        List<Client> clients=clientService.getAll();
         String text=client_name_t.getText();
+        long customerId=0l;
         for(Client client: clients){
             if(client.getName().equals(text)){
-                customer_label.setText(text);
-                address_label.setText(client.getAddress());
-                phone_label.setText(client.getPhone());
-                fax_label.setText(client.getFax());
-                emailTextfiled.setText(client.getEmail());
+                FormDto dto=formFactory.getFormObject(Constants.CLIENT_NAME,text);
+                populateClientDetails(dto);
+                customerId=client.getId();
+                break;
             }
         }
-
+        if(customerId!=0) {
+            List<String> instrumentStringList = new LinkedList<>();
+            List<Instrument> instrumentListAll = instrumentService.getInstrumentsByClientId(customerId);
+            instrumentListAll.stream().map(t -> t.getTagNo()).forEach(
+                    t -> instrumentStringList.add(t)
+            );
+            TextFields.bindAutoCompletion(tag_no_text, instrumentStringList);
+        }
     }
 
     private List<Client> getClients() {
@@ -484,7 +498,6 @@ public class MainController  {
 
         Report report=new Report();
         try{
-
             File file=new File(details.getPath());
             byte[] bytesArray=new byte[(int)file.length()];
             FileInputStream fis = new FileInputStream(file);
@@ -521,7 +534,7 @@ public class MainController  {
 
             Map<String, String> customerCompleteMap = new HashMap<>();
             customerCompleteMap.put(Constants.CUSTOMER, customer_label.getText());
-            customerCompleteMap.put(Constants.ADDRESS, address_label.getText());
+            customerCompleteMap.put(Constants.ADDRESS, (String)address_combo.getValue());
             customerCompleteMap.put(Constants.FAX, fax_label.getText());
             customerCompleteMap.put(Constants.EMAIL, emailTextfiled.getText());
             customerCompleteMap.put(Constants.PHONE, phone_label.getText());
@@ -629,7 +642,6 @@ public class MainController  {
         }
         return parameterReportMap;
 
-
     }
 
     private void createFieldsMap() {
@@ -637,7 +649,7 @@ public class MainController  {
         parameterMap.put(client_name_t,client_name_t.getText());
         parameterMap.put(date_heading_text,date_heading_text.getText());
         parameterMap.put(customer_label,customer_label.getText());
-        parameterMap.put(address_label,address_label.getText());
+        parameterMap.put(address_label,(String)address_combo.getValue());
         parameterMap.put(phone_label,phone_label.getText());
         parameterMap.put(serial_no_1,serial_no_1.getText());
         parameterMap.put(model_no_1,model_no_1.getText());
@@ -779,12 +791,6 @@ public class MainController  {
         }
     }
 
-    private String getOutputOfTextField(String error,String input){
-        double errD=Double.valueOf(error);
-        double inputD=Double.valueOf(input);
-        double result=(inputD+errD);
-        return String.format("%.2f", result);
-    }
     private void addListenersToAllText(TextField[] outputFound, TextField[] labelArr, Label[] inputLabel) {
         int i=0;
         for(TextField tField:outputFound){
@@ -794,9 +800,7 @@ public class MainController  {
                 if(Utility.isInputANumber(tField.getText())){
                     double value=Double.valueOf(tField.getText());
                     if(!output1.getText().isEmpty()) {
-                        //String output = String.format("%.2f", value - Double.valueOf(output1.getText()));
-                       // errorText.setText(output);
-                        checkIfAllLabelsHaveFilled(inputLabel);
+                        checkIfAllLabelsHaveFilledAndSetWhetherWorkingOrNot(inputLabel);
                     }
                 }else{
                     errorText.setText("");
@@ -814,14 +818,13 @@ public class MainController  {
             tField.textProperty().addListener((observableValue, s, t1) -> {
                 if(Utility.isInputANumber(tField.getText())){
                     tFoundField.setText(tField.getText());
-
                 }
             });
 
         }
     }
 
-    private void checkIfAllLabelsHaveFilled(Label[] inputLabel) {
+    private void checkIfAllLabelsHaveFilledAndSetWhetherWorkingOrNot(Label[] inputLabel) {
         try {
             double[] error=new double[5];
 
@@ -833,9 +836,12 @@ public class MainController  {
             int i=0;
             boolean passed =true;
             for(double err:error){
-                double per=getPercentage(Math.abs(err),Double.valueOf(inputLabel[i].getText()));
-                if(per>=Double.valueOf(toleranceText.getText())){
-                    passed=false;
+                Double per=getPercentage(Math.abs(err),Double.valueOf(inputLabel[i].getText()));
+                if(!per.equals(Double.POSITIVE_INFINITY)&&!per.equals(Double.NEGATIVE_INFINITY)) {
+                    double tolerancePer = Double.valueOf(toleranceText.getText());
+                    if (per >= tolerancePer) {
+                        passed = false;
+                    }
                 }
                 i++;
             }
@@ -863,7 +869,6 @@ public class MainController  {
         double percentage= (error/value)*100;
         return percentage;
     }
-
 
     public void findExcelFile(ActionEvent actionEvent) {
         Stage stage = (Stage) root.getScene().getWindow();
@@ -897,5 +902,26 @@ public class MainController  {
 
     public void clearForm(ActionEvent actionEvent) {
         resetForm();
+    }
+
+    private void setRangeForInputLabels(String rangeNumStr) {
+        Double range = Double.valueOf(rangeNumStr);
+        input_4_found.setText(String.format("%.2f", range));
+        input_3_found.setText(String.format("%.2f", range * .75));
+        input_2_found.setText(String.format("%.2f", range * .5));
+        input_1_found.setText(String.format("%.2f", range * .25));
+        input_0_found.setText("0.00");
+        input_4_left.setText(String.format("%.2f", range));
+        input_3_left.setText(String.format("%.2f", range * .75));
+        input_2_left.setText(String.format("%.2f", range * .5));
+        input_1_left.setText(String.format("%.2f", range * .25));
+        input_0_left.setText("0.00");
+    }
+
+    private String getOutputOfTextField(String error,String input){
+        double errD=Double.valueOf(error);
+        double inputD=Double.valueOf(input);
+        double result=(inputD+errD);
+        return String.format("%.2f", result);
     }
 }

@@ -5,11 +5,7 @@ import com.example.demo.entities.Client;
 import com.example.demo.entities.ExcelResult;
 import com.example.demo.entities.Instrument;
 import com.example.demo.entities.MasterInstruments;
-import com.example.demo.services.ClientService;
-import com.example.demo.services.ExcelService;
-
-import com.example.demo.services.InstrumentService;
-import com.example.demo.services.MasterInstrumentsService;
+import com.example.demo.services.*;
 
 import javafx.scene.control.Alert;
 import org.slf4j.Logger;
@@ -44,11 +40,14 @@ public class ExcelUtility {
     @Autowired
     private MasterInstrumentsService masterInstrumentsService;
 
+
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelUtility.class);
 
     public ResponseDTO updateDatabase(File file) {
         ResponseDTO responseDTO=new ResponseDTO();
-        Set<Instrument> instrumentSet=new HashSet<>();
+        List<Instrument> instrumentSet=new LinkedList<>();
         List<Client> clientList=null;
         List<MasterInstruments> masterInstrumentList=null;
 
@@ -70,18 +69,29 @@ public class ExcelUtility {
                         } else if(mySheet.getSheetName().equalsIgnoreCase(Constants.MASTER)){
                             masterInstrumentList = (List<MasterInstruments>) collection;
                         } else  {
-                            Set<Instrument> localInstrumentSet = (Set<Instrument>) collection;
+                            List<Instrument> localInstrumentSet = (List<Instrument>) collection;
                             instrumentSet.addAll(localInstrumentSet);
-
                         }
                     }
                 }
             }
 
 
-
-                instrumentService.saveAll(instrumentSet);
                 clientService.saveAll(clientList);
+                clientList=clientService.getAll();
+                Map<String,Long> nameIdMap=new HashMap<>();
+                for(Client client:clientList){
+                    nameIdMap.put(client.getName(),client.getId());
+                }
+                for(Instrument instrument: instrumentSet){
+                    Long id=nameIdMap.get(instrument.getClientName());
+                    if(id!=null) {
+                        instrument.setClientId(id);
+                    }
+
+                }
+                instrumentService.saveAll(instrumentSet);
+
                 masterInstrumentsService.saveAll(masterInstrumentList);
 
 
@@ -107,11 +117,22 @@ public class ExcelUtility {
                     masterInstrumentsList = (List<MasterInstruments>) objectList.stream().map(o -> (MasterInstruments) o).collect(Collectors.toList());
                     return masterInstrumentsList;
                 } else {
-                    Set<Instrument> instrumentSet = new HashSet();
-                    instrumentSet = (Set<Instrument>) objectList.stream().map(o -> (Instrument) o).filter(o -> ((Instrument) o).getTagNo() != null).collect(Collectors.toSet());
-                    System.out.println(name);
-                    return instrumentSet;
+                    List<Instrument> instrumentList = new LinkedList<>();
 
+                    instrumentList = (List<Instrument>)
+                            objectList.stream().map(o -> (Instrument) o).filter(o->((Instrument) o).getCalRefNo()!=null).collect(Collectors.toList());
+                    String clientName="";
+                    for(Instrument instrument: instrumentList){
+                        if(!instrument.getClientName().isEmpty()){
+                            clientName=instrument.getClientName();
+                            break;
+                        }
+                    }
+                    final String clNameFinal=clientName;
+                    instrumentList=instrumentList.stream().map((instrument -> {instrument.setClientName(clNameFinal);
+                    return instrument;
+                    })).collect(Collectors.toList());
+                    return instrumentList;
                 }
             }
         }catch(Exception e){
@@ -158,19 +179,22 @@ public class ExcelUtility {
             int index = 0;
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
-                String type = null;
+
                 String value = null;
                 String param = indexParameterMap.get(index);
                     if (cell.getCellType() == CellType.NUMERIC) {
                         int value1 = (int) cell.getNumericCellValue();
-                        type = "numeric";
+
                         value = value1 + "";
                     } else {
-                        type = "string";
+
                         value = cell.toString();
                     }
                     if (param.equalsIgnoreCase(Constants.DUE_DATE_MASTER)) {
                         value = cell.toString();
+                    }
+                    if(value.equalsIgnoreCase(Constants.IGNORE_LINE)){
+                        break;
                     }
                     if (param != null) {
                         index++;
@@ -200,6 +224,9 @@ public class ExcelUtility {
                 Cell cell = cellIterator.next();
                 String value = cell.toString();
                 String param = indexParameterMap.get(index);
+                if(value.equalsIgnoreCase(Constants.IGNORE_LINE)){
+                    return null;
+                }
                 if (param != null) {
                     index++;
                     try {
@@ -286,7 +313,7 @@ public class ExcelUtility {
             if (param.equals(Constants.TAG_NO)&&!value.isEmpty()) {
                 instrument.setTagNo(value);
             } else if (param.equals(Constants.SR_NO)&&!value.isEmpty()) {
-                instrument.setSerialNo(value.substring(0,value.indexOf(".")));
+                instrument.setSerialNo(Integer.valueOf(value).intValue()+"");
             } else if (param.equals(Constants.INSTRUMENT)) {
                 instrument.setDescription(value);
             } else if (param.equals(Constants.MAKE)) {
@@ -294,7 +321,7 @@ public class ExcelUtility {
             } else if (param.equals(Constants.MODEL)) {
                 instrument.setModel(value);
             } else if (param.equals(Constants.CAL_REF_NO)) {
-                instrument.setCal_ref_no(value);
+                instrument.setCalRefNo(value);
             } else if (param.equals(Constants.DUE_DATE_HEADER)) {
 
                 if(!value.isEmpty()){
@@ -315,19 +342,11 @@ public class ExcelUtility {
                 instrument.setRanges(value);
             } else if(param.equals(Constants.REMARKS)){
                 instrument.setRemarks(value);
+            }else if(param.equalsIgnoreCase(Constants.CLIENT)){
+                instrument.setClientName(value);
             }
         }catch(Exception e) {
-
-             if (!value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
-                //Utility.showPopup(Alert.AlertType.ERROR, "Incorrect Date value or Format in Instrument Sheet " +value+"  in Due Date Column  : Enter Date With Correct Format Like : \"April 3,2021");
-             }else if (value.equalsIgnoreCase(Constants.DUE_DATE_HEADER) && param.equalsIgnoreCase(Constants.DUE_DATE_HEADER)){
-
-             }else if(param.equals(Constants.SR_NO)){}
-
-             else {
-                 //Utility.showPopup(Alert.AlertType.ERROR, "Error for value : " + value + "  param: " + param);
-
-             }
+            LOGGER.error("Errror",e);
 
         }
 
@@ -354,19 +373,6 @@ public class ExcelUtility {
 
     }
 
-    private static String cleanLevel(String param) {
-        if(param.indexOf("(")!=-1) {
-            String[] values=param.split("/");
-            if(values.length==2) {
-                return values[1].substring(0,values[1].length()-2);
-            }else{
-             param=param.substring("LEVEL ".length(),param.length()-1);
-             param=param=param.trim().substring(1);
-             return param;
-            }
-        }
-        return "";
-    }
 
     private static boolean makeIndexOfParameter(Iterator<Cell> cellIterator, ExcelResult currentSheetDto) {
         Map<Integer, String> parameterMap=currentSheetDto.getHashmap();
@@ -394,7 +400,7 @@ public class ExcelUtility {
     }
 
     private static ExcelResult getsheetDto(List<ExcelResult> resultDtoList, String sheetName) {
-        //ExcelResultDto result=new ExcelResultDto();
+
         for(ExcelResult resultDto:resultDtoList){
             String nameOfSheetProcessed=sheetName.trim();
             String excelFromDTO=resultDto.getExcelName();

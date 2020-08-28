@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -19,15 +20,15 @@ public class Client {
     private String fax;
 
     public long getId() {
-        return id;
+        return clientId;
     }
 
     public void setId(long id) {
-        this.id = id;
+        this.clientId = id;
     }
 
-
-    private long id;
+    @Column(name="id")
+    private long clientId;
 
     @Id
     private String name;
