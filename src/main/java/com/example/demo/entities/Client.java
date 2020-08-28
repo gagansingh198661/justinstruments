@@ -27,10 +27,11 @@ public class Client {
         this.clientId = id;
     }
 
+    @Id
     @Column(name="id")
     private long clientId;
 
-    @Id
+
     private String name;
 
     private String description;
