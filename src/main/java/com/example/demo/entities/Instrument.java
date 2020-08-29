@@ -55,26 +55,17 @@ public class Instrument {
 
     private String description;
 
-    public long getClientId() {
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(long clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
-    private long clientId;
+    private String clientId;
 
-    public String getClientName() {
-        return clientName;
-    }
 
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
-    }
-
-    @Transient
-    private String clientName;
 
     public String getTagNo() {
         return tagNo;
@@ -98,19 +89,17 @@ public class Instrument {
         if (o == null || getClass() != o.getClass()) return false;
         Instrument that = (Instrument) o;
         boolean equal=true;
-        if(!instrumentSerialNo.equals(that.instrumentSerialNo)){
+        if(!calRefNo.equals(that.calRefNo)){
             equal=false;
         }
-        if(!tagNo.equals(that.tagNo)){
-            equal=false;
-        }
+
         return equal;
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(instrumentSerialNo);
+        return Objects.hash(calRefNo);
     }
 
     public String getSerialNo() {

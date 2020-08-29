@@ -21,9 +21,9 @@ public class ClientService {
 
     public void saveAll(List<Client> clientList){
         try{
-            if(clientList.isEmpty())
+            if(clientList==null||clientList.isEmpty())
                 return;
-            clientRepository.deleteAll();
+            //clientRepository.deleteAll();
             for(Client client:clientList) {
                 try {
                   client=  clientRepository.save(client);
@@ -46,7 +46,7 @@ public class ClientService {
     public Client getClient(String name){
         return clientRepository.findByName(name);
     }
-
+    /*
     public Client getClient(long id){
         Client client=null;
         try {
@@ -57,5 +57,5 @@ public class ClientService {
             return client;
         }
 
-    }
+    }*/
 }

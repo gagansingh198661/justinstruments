@@ -67,7 +67,7 @@ public class InstrumentService {
         return instrumentRepository.findAll();
     }
 
-    public List<Instrument> getInstrumentsByClientId(long clientId){
+    public List<Instrument> getInstrumentsByClientId(String clientId){
         return instrumentRepository.findByClientId(clientId);
     }
 }

@@ -16,5 +16,5 @@ public interface InstrumentRepositoryInterface extends JpaRepository<Instrument,
 
      Instrument findByCalRefNo(String cal);
 
-    public List<Instrument> findByClientId(long clientId);
+    public List<Instrument> findByClientId(String clientId);
 }

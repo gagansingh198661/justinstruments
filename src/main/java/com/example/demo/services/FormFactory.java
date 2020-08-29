@@ -23,6 +23,7 @@ public class FormFactory {
             return makeFormObjectFromClientName((String)o);
         }else if(type.equalsIgnoreCase(Constants.CAL_REF_NO)){
             return makeFormObjectFromClientRefNo((String)o);
+
         }
         return new FormDto();
     }
@@ -33,7 +34,7 @@ public class FormFactory {
         fillFormDto(instrument,dto);
         dto.setClientCalibrationRefNo(cal_ref_no);
 
-        long clientId=instrument.getClientId();
+        String clientId=instrument.getClientId();
         Client client=cService.getClient(clientId);
         fillFormDto(client,dto);
         return dto;

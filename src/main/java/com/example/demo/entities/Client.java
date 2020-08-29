@@ -19,19 +19,7 @@ public class Client {
 
     private String fax;
 
-    public long getId() {
-        return clientId;
-    }
-
-    public void setId(long id) {
-        this.clientId = id;
-    }
-
     @Id
-    @Column(name="id")
-    private long clientId;
-
-
     private String name;
 
     private String description;

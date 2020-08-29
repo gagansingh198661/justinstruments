@@ -100,7 +100,7 @@
                         <content>
                             <Pane minHeight="0.0" minWidth="0.0" prefHeight="818.0" prefWidth="746.0">
                                 <TextField fx:id="ref_no" layoutX="331.0" layoutY="33.0" prefHeight="27.0" prefWidth="109.0" />
-                                <Label layoutX="13.0" layoutY="67.0" prefHeight="18.0" prefWidth="61.0" text="CUSTOMER" />
+                                <Label layoutX="13.0" layoutY="67.0" prefHeight="18.0" prefWidth="82.0" text="CUSTOMER" />
                                 <Label fx:id="customer_label" layoutX="97.0" layoutY="62.0" prefHeight="24.0" prefWidth="249.0" text="Client Name" />
                                 <Label layoutX="14.0" layoutY="126.0" text="PHONE" />
                                 <Label id="phone_label" fx:id="phone_label" layoutX="89.0" layoutY="123.0" prefHeight="23.0" prefWidth="110.0" text="Phone" />
@@ -286,7 +286,7 @@
                         <TextField id="settingsAtTestText" fx:id="settingsAtTestText" layoutX="329.0" layoutY="318.0" text="21.5 C, 52%" />
                         <CheckBox fx:id="validationCheck" layoutX="13.0" layoutY="790.0" mnemonicParsing="false" onAction="#isAValidationReport" text="Validation Report" />
                         <Button fx:id="reserBtn" layoutX="376.0" layoutY="787.0" mnemonicParsing="false" onAction="#clearForm" prefHeight="26.0" prefWidth="80.0" text="Clear Form" />
-                        <ComboBox fx:id="address_combo" layoutX="90.0" layoutY="90.0" prefWidth="150.0" />
+                        <ComboBox fx:id="address_combo" layoutX="90.0" layoutY="90.0" prefWidth="150.0" promptText="Address" />
                         <Label layoutX="14.0" layoutY="94.0" prefHeight="21.0" prefWidth="62.0" text="ADDRESS" />
 
                             </Pane>

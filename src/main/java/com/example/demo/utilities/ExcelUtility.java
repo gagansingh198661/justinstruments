@@ -77,22 +77,11 @@ public class ExcelUtility {
             }
 
 
-                clientService.saveAll(clientList);
-                clientList=clientService.getAll();
-                Map<String,Long> nameIdMap=new HashMap<>();
-                for(Client client:clientList){
-                    nameIdMap.put(client.getName(),client.getId());
-                }
-                for(Instrument instrument: instrumentSet){
-                    Long id=nameIdMap.get(instrument.getClientName());
-                    if(id!=null) {
-                        instrument.setClientId(id);
-                    }
+            clientService.saveAll(clientList);
+            //clientList=clientService.getAll();
+            instrumentService.saveAll(instrumentSet);
 
-                }
-                instrumentService.saveAll(instrumentSet);
-
-                masterInstrumentsService.saveAll(masterInstrumentList);
+            masterInstrumentsService.saveAll(masterInstrumentList);
 
 
         responseDTO.setReturned(true);
@@ -123,13 +112,12 @@ public class ExcelUtility {
                             objectList.stream().map(o -> (Instrument) o).filter(o->((Instrument) o).getCalRefNo()!=null).collect(Collectors.toList());
                     String clientName="";
                     for(Instrument instrument: instrumentList){
-                        if(!instrument.getClientName().isEmpty()){
-                            clientName=instrument.getClientName();
-                            break;
+                        if(!instrument.getClientId().isEmpty()){
+                            clientName=instrument.getClientId();break;
                         }
                     }
                     final String clNameFinal=clientName;
-                    instrumentList=instrumentList.stream().map((instrument -> {instrument.setClientName(clNameFinal);
+                    instrumentList=instrumentList.stream().map((instrument -> {instrument.setClientId(clNameFinal);
                     return instrument;
                     })).collect(Collectors.toList());
                     return instrumentList;
@@ -234,7 +222,6 @@ public class ExcelUtility {
                             if(Utility.isInputANumber(value)){
                                 DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
                                 df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
-
                                 value=new BigDecimal(value).toPlainString(); // Output: 0.00000021
 
                             }
@@ -299,7 +286,7 @@ public class ExcelUtility {
                 client.setDescription(value);
                 //instrument.setD
             }else if(param.equals(Constants.CLIENT_NO)){
-                client.setId(Double.valueOf(value).longValue());
+                //client.setId(Double.valueOf(value).longValue());
             }
         }catch(Exception e){
             System.out.println("Error for value :"+value+"  param: "+param);
@@ -343,7 +330,7 @@ public class ExcelUtility {
             } else if(param.equals(Constants.REMARKS)){
                 instrument.setRemarks(value);
             }else if(param.equalsIgnoreCase(Constants.CLIENT)){
-                instrument.setClientName(value);
+                instrument.setClientId(value);
             }
         }catch(Exception e) {
             LOGGER.error("Errror",e);

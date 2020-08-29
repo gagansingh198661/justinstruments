@@ -233,11 +233,18 @@ public class MainController  {
                 }
             }else if(rangeString.indexOf("/")!=-1) {
                 rangeArray = rangeString.split("/");
+                rangeNumStr=rangeArray[0];
             }else{
-                rangeNumStr=rangeString;
+                rangeArray=rangeString.split(" ");
+                rangeNumStr=rangeArray[0];
             }
-            rangeArray=rangeNumStr.split(" ");
-            rangeNumStr = rangeArray[0];
+            if(rangeNumStr.indexOf(" ")!=-1){
+                rangeArray=rangeNumStr.split(" ");
+                if(rangeArray.length==2){
+                    rangeNumStr=rangeArray[0];
+                }
+            }
+
             parameterMap.put(Constants.UNIT,rangeArray[1]);
             setRangeForInputLabels(rangeNumStr);
         });
@@ -381,16 +388,16 @@ public class MainController  {
     private void fillCustomerDetailsAndInstruments() {
         List<Client> clients=clientService.getAll();
         String text=client_name_t.getText();
-        long customerId=0l;
+        String customerId="";
         for(Client client: clients){
             if(client.getName().equals(text)){
                 FormDto dto=formFactory.getFormObject(Constants.CLIENT_NAME,text);
                 populateClientDetails(dto);
-                customerId=client.getId();
+                customerId=client.getName();
                 break;
             }
         }
-        if(customerId!=0) {
+        if(!customerId.isEmpty()) {
             List<String> instrumentStringList = new LinkedList<>();
             List<Instrument> instrumentListAll = instrumentService.getInstrumentsByClientId(customerId);
             instrumentListAll.stream().map(t -> t.getTagNo()).forEach(
@@ -412,7 +419,6 @@ public class MainController  {
 
         if(date!=null) {
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-
             LocalDate duedate = date.plusMonths(Long.valueOf(frequency.getValue().toString()));
             Date dateDate=Date.from(duedate.atStartOfDay(defaultZoneId).toInstant());
             String formattedDate = formatter.format(dateDate);
@@ -464,10 +470,12 @@ public class MainController  {
     }
 
     private void resetForm() {
+
         for(Map.Entry<Object,String> entry:parameterMap.entrySet()){
             Object object=entry.getKey();
             if(object instanceof Label){
                 Label label=(Label) object;
+
                 if(entry.getValue()!=null) {
                     label.setText(entry.getValue());
                 }else {
@@ -482,11 +490,11 @@ public class MainController  {
                     textField.setText("");
                 }
             }else if(object instanceof ComboBox){
-                ComboBox textField=(ComboBox) object;
+                ComboBox comboBox=(ComboBox) object;
                 if(entry.getValue()!=null) {
-                    textField.setValue(entry.getValue());
+                    comboBox.setValue(entry.getValue());
                 }else{
-                    textField.setValue(textField.getPromptText());
+                    comboBox.setValue(comboBox.getPromptText());
                 }
             }
            // instrument_serial_no_textfield.setText(instrument_serial_no_textfield.getPromptText());
@@ -649,7 +657,7 @@ public class MainController  {
         parameterMap.put(client_name_t,client_name_t.getText());
         parameterMap.put(date_heading_text,date_heading_text.getText());
         parameterMap.put(customer_label,customer_label.getText());
-        parameterMap.put(address_label,(String)address_combo.getValue());
+        parameterMap.put(address_combo,(String)address_combo.getValue());
         parameterMap.put(phone_label,phone_label.getText());
         parameterMap.put(serial_no_1,serial_no_1.getText());
         parameterMap.put(model_no_1,model_no_1.getText());
@@ -905,17 +913,19 @@ public class MainController  {
     }
 
     private void setRangeForInputLabels(String rangeNumStr) {
-        Double range = Double.valueOf(rangeNumStr);
-        input_4_found.setText(String.format("%.2f", range));
-        input_3_found.setText(String.format("%.2f", range * .75));
-        input_2_found.setText(String.format("%.2f", range * .5));
-        input_1_found.setText(String.format("%.2f", range * .25));
-        input_0_found.setText("0.00");
-        input_4_left.setText(String.format("%.2f", range));
-        input_3_left.setText(String.format("%.2f", range * .75));
-        input_2_left.setText(String.format("%.2f", range * .5));
-        input_1_left.setText(String.format("%.2f", range * .25));
-        input_0_left.setText("0.00");
+        if(!rangeNumStr.isEmpty()&&Utility.isInputANumber(rangeNumStr)) {
+            Double range = Double.valueOf(rangeNumStr);
+            input_4_found.setText(String.format("%.2f", range));
+            input_3_found.setText(String.format("%.2f", range * .75));
+            input_2_found.setText(String.format("%.2f", range * .5));
+            input_1_found.setText(String.format("%.2f", range * .25));
+            input_0_found.setText("0.00");
+            input_4_left.setText(String.format("%.2f", range));
+            input_3_left.setText(String.format("%.2f", range * .75));
+            input_2_left.setText(String.format("%.2f", range * .5));
+            input_1_left.setText(String.format("%.2f", range * .25));
+            input_0_left.setText("0.00");
+        }
     }
 
     private String getOutputOfTextField(String error,String input){
