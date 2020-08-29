@@ -320,7 +320,9 @@ public class MainController  {
         //TextFields.bindAutoCompletion(tag_no_text,instrumentStringList);
         tag_no_text.textProperty().addListener(
                 (observableValue, s, t1) -> {
-                    List<Instrument> instrumentList=instrumentService.getInstruments(tag_no_text.getText()) ;
+                    List<Instrument> instrumentList=new LinkedList<>();
+                    if(!client_name_t.getText().isEmpty())
+                    instrumentList=instrumentService.getInstruments(tag_no_text.getText(),client_name_t.getText()) ;
                     if(instrumentList.size()!=0) {
                         Instrument instrument = instrumentList.get(0);
                         manufacturerInstrument.setText(instrument.getMake());
@@ -331,8 +333,10 @@ public class MainController  {
                         descriptionInstrument.setText(instrument.getDescription());
                         Date due_date_1=instrument.getDate();
                         DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-                        String strDate = dateFormat.format(due_date_1);
-                        due_date.setText(strDate);
+                        if(due_date_1!=null) {
+                            String strDate = dateFormat.format(due_date_1);
+                            due_date.setText(strDate);
+                        }
                         String[] comboArray=instrument.getRanges().split("##");
                         List<String> comboList=Arrays.asList(comboArray).stream().map(input->{
                             String param=input;

@@ -25,7 +25,9 @@ public class InstrumentService {
     private InstrumentRepositoryInterface instrumentRepository;
 
     public void saveAll(List<Instrument> instrumentSet){
-
+         if(instrumentSet.size()!=0){
+             instrumentRepository.deleteAll();
+         }
         for(Instrument instruemnt:instrumentSet) {
             try {
                 instrumentRepository.save(instruemnt);
@@ -45,6 +47,7 @@ public class InstrumentService {
        return new LinkedList<>();
     }
 
+
     public List<Instrument> getInstrumentsBySerialNo(String serialNo){
         try {
             return instrumentRepository.findByInstrumentSerialNo(serialNo);
@@ -55,8 +58,7 @@ public class InstrumentService {
     }
 
     public Instrument getInstrumentByCalRefNo(String cal_ref){
-        try{
-            return instrumentRepository.findByCalRefNo(cal_ref);
+        try{ return instrumentRepository.findByCalRefNo(cal_ref);
         }catch (Exception e){
             LOGGER.error("Error for cal_ref :"+cal_ref,e);
         }
@@ -70,4 +72,14 @@ public class InstrumentService {
     public List<Instrument> getInstrumentsByClientId(String clientId){
         return instrumentRepository.findByClientId(clientId);
     }
+
+    public List<Instrument> getInstruments(String tag_no,String client_id){
+        try {
+            return instrumentRepository.findByTagNoAndClientId(tag_no,client_id);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return new LinkedList<>();
+    }
+
 }

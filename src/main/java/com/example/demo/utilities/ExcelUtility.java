@@ -110,9 +110,9 @@ public class ExcelUtility {
 
                     instrumentList = (List<Instrument>)
                             objectList.stream().map(o -> (Instrument) o).filter(o->((Instrument) o).getCalRefNo()!=null).collect(Collectors.toList());
-                    String clientName="";
+                    String clientName=null;
                     for(Instrument instrument: instrumentList){
-                        if(!instrument.getClientId().isEmpty()){
+                        if(instrument.getClientId()!=null&&!instrument.getClientId().isEmpty()){
                             clientName=instrument.getClientId();break;
                         }
                     }
