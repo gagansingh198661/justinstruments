@@ -23,7 +23,7 @@ public class ClientService {
         try{
             if(clientList==null||clientList.isEmpty())
                 return;
-            //clientRepository.deleteAll();
+            clientRepository.deleteAll();
             for(Client client:clientList) {
                 try {
                   client=  clientRepository.save(client);

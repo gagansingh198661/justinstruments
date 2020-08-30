@@ -140,7 +140,7 @@ public class ExcelUtility {
         List objectList = new LinkedList();
 
         boolean indexOfParametersHaveBeenMade = false;
-        for(int i=rowStart;i<rowLast;i++){
+        for(int i=rowStart;i<=rowLast;i++){
             Row row=sheet.getRow(i);
             if(row==null){
                 continue;
@@ -196,11 +196,15 @@ public class ExcelUtility {
             Client client = new Client();
             for (int index = 0;index<row.getLastCellNum();index++) {
                 Cell cell = row.getCell(index);
-                String value = cell.toString();
+                String value ="";
+                if(cell!=null) {
+                    value = cell.toString();
+                }
                 String param = indexParameterMap.get(index);
                 if (param != null) {
                     client = constructClientObject(value, param, client);
                 }
+
             }
             return client;
         }else  {
@@ -377,15 +381,17 @@ public class ExcelUtility {
         Map<Integer, String> parameterMap=currentSheetDto.getHashmap();
         Map<Integer, String> generatedMap = new HashMap<>();
         boolean flag=false;
-        for(int index=0;index<row.getLastCellNum();index++){
-            Cell cell=row.getCell(index);
-            if(!cell.toString().isEmpty()) {
-                for(Map.Entry<Integer, String> entry:parameterMap.entrySet()) {
-                    String param= cell.getStringCellValue().trim();
-                    if (param.toLowerCase().equals(entry.getValue().toLowerCase())) {
-                        generatedMap.put(index,cell.getStringCellValue());
-                        flag=true;
-                        break;
+        if(row!=null) {
+            for (int index = 0; index < row.getLastCellNum(); index++) {
+                Cell cell = row.getCell(index);
+                if (!cell.toString().isEmpty()) {
+                    for (Map.Entry<Integer, String> entry : parameterMap.entrySet()) {
+                        String param = cell.getStringCellValue().trim();
+                        if (param.toLowerCase().equals(entry.getValue().toLowerCase())) {
+                            generatedMap.put(index, cell.getStringCellValue());
+                            flag = true;
+                            break;
+                        }
                     }
                 }
             }
