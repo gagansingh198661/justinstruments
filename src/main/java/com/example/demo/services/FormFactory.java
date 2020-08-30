@@ -23,7 +23,6 @@ public class FormFactory {
             return makeFormObjectFromClientName((String)o);
         }else if(type.equalsIgnoreCase(Constants.CAL_REF_NO)){
             return makeFormObjectFromClientRefNo((String)o);
-
         }
         return new FormDto();
     }

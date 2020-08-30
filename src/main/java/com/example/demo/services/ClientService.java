@@ -46,16 +46,5 @@ public class ClientService {
     public Client getClient(String name){
         return clientRepository.findByName(name);
     }
-    /*
-    public Client getClient(long id){
-        Client client=null;
-        try {
-            client= clientRepository.findByClientId(id);
-        }catch (Exception e){
-            LOGGER.error("Error :",e);
-        }finally {
-            return client;
-        }
 
-    }*/
 }

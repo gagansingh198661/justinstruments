@@ -58,23 +58,23 @@ public class ExcelUtility {
             e.printStackTrace();
         }
         int numOfSheets=  wb.getNumberOfSheets();
-            for(int i=0;i<numOfSheets; i++) {
-                Sheet mySheet = wb.getSheetAt(i);
-                if(mySheet!=null) {
-                    Collection collection = processResult(mySheet);
-                    if (collection != null) {
-                        if (mySheet.getSheetName().equals(Constants.CLIENT)) {
-                            clientList = (List<Client>) collection;
+        for(int i=0;i<numOfSheets; i++) {
+            Sheet mySheet = wb.getSheetAt(i);
+            if(mySheet!=null) {
+                Collection collection = processResult(mySheet);
+                if (collection != null) {
+                    if (mySheet.getSheetName().equals(Constants.CLIENT)) {
+                        clientList = (List<Client>) collection;
 
-                        } else if(mySheet.getSheetName().equalsIgnoreCase(Constants.MASTER)){
-                            masterInstrumentList = (List<MasterInstruments>) collection;
-                        } else  {
-                            List<Instrument> localInstrumentSet = (List<Instrument>) collection;
-                            instrumentSet.addAll(localInstrumentSet);
-                        }
+                    } else if(mySheet.getSheetName().equalsIgnoreCase(Constants.MASTER)){
+                        masterInstrumentList = (List<MasterInstruments>) collection;
+                    } else  {
+                        List<Instrument> localInstrumentSet = (List<Instrument>) collection;
+                        instrumentSet.addAll(localInstrumentSet);
                     }
                 }
             }
+        }
 
 
             clientService.saveAll(clientList);
@@ -135,21 +135,24 @@ public class ExcelUtility {
         if(currentSheetDto==null){
             return null;
         }
-        Iterator<Row> rowIterator = sheet.iterator();
+        int rowStart=sheet.getFirstRowNum();
+        int rowLast=sheet.getLastRowNum();
         List objectList = new LinkedList();
 
         boolean indexOfParametersHaveBeenMade = false;
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            Iterator<Cell> cellIterator = row.cellIterator();
+        for(int i=rowStart;i<rowLast;i++){
+            Row row=sheet.getRow(i);
+            if(row==null){
+                continue;
+            }
             if (!indexOfParametersHaveBeenMade) {
                 try{
-                indexOfParametersHaveBeenMade = makeIndexOfParameter(cellIterator, currentSheetDto);
+                    indexOfParametersHaveBeenMade = makeIndexOfParameter(row, currentSheetDto);
                 }catch(Exception e){
                     LOGGER.error("Error occured",e);
                 }
             } else {
-                Object populatedObject = getObjectFromCell(sheet.getSheetName(), currentSheetDto, cellIterator);
+                Object populatedObject = getObjectFromCell(sheet, currentSheetDto, row);
                 if (populatedObject != null) {
                     objectList.add(populatedObject);
                 }
@@ -157,17 +160,16 @@ public class ExcelUtility {
             }
         }
 
+
         return objectList;
     }
 
-    private static Object getObjectFromCell(String sheetName, ExcelResult currentSheetDto, Iterator<Cell> cellIterator) {
+    private static Object getObjectFromCell(Sheet sheet, ExcelResult currentSheetDto, Row row) {
         Map<Integer, String> indexParameterMap = currentSheetDto.getHashmap();
-         if (sheetName.equals(Constants.MASTER)) {
+         if (sheet.getSheetName().equals(Constants.MASTER)) {
             MasterInstruments mInstrument = new MasterInstruments();
-            int index = 0;
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-
+            for (int index = 0;index<row.getLastCellNum();index++) {
+                Cell cell = row.getCell(index);
                 String value = null;
                 String param = indexParameterMap.get(index);
                     if (cell.getCellType() == CellType.NUMERIC) {
@@ -185,53 +187,57 @@ public class ExcelUtility {
                         break;
                     }
                     if (param != null) {
-                        index++;
+                        value.trim();
                         mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
                     }
 
             }
             return mInstrument;
-        } else if(sheetName.equals(Constants.CLIENT)){
+        } else if(sheet.getSheetName().equals(Constants.CLIENT)){
             Client client = new Client();
-            int index = 0;
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
+            for (int index = 0;index<row.getLastCellNum();index++) {
+                Cell cell = row.getCell(index);
                 String value = cell.toString();
                 String param = indexParameterMap.get(index);
                 if (param != null) {
-                    index++;
+                    value.trim();
                     client = constructClientObject(value, param, client);
                 }
             }
             return client;
         }else  {
             Instrument instrument = new Instrument();
-            int index = 0;
-            while (cellIterator.hasNext()) {
+            for (int index = 0;index<row.getLastCellNum();index++) {
+                 if (row == null) {
+                     continue;
+                 }
+                 Cell cell = row.getCell(index);
+                 String value = "";
+                 String param = indexParameterMap.get(index);
+                 if (cell != null) {
+                     value = cell.toString();
+                 }
+                 if(value.equalsIgnoreCase(Constants.IGNORE_LINE)){
+                     return null;
+                 }
+                 if (param != null) {
 
-                Cell cell = cellIterator.next();
-                String value = cell.toString();
-                String param = indexParameterMap.get(index);
-                if(value.equalsIgnoreCase(Constants.IGNORE_LINE)){
-                    return null;
-                }
-                if (param != null) {
-                    index++;
-                    try {
-                        if(param.equalsIgnoreCase(Constants.TAG_NO)){
-                            if(Utility.isInputANumber(value)){
-                                DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-                                df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
-                                value=new BigDecimal(value).toPlainString(); // Output: 0.00000021
+                     try {
+                         if(param.equalsIgnoreCase(Constants.TAG_NO)){
+                             if(Utility.isInputANumber(value)){
+                                 DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+                                 df.setMaximumFractionDigits(340); // 340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+                                 value=new BigDecimal(value).toPlainString(); // Output: 0.00000021
+                             }
+                         }
+                         value.trim();
+                         instrument = constructInstrumentObject(value, param, instrument);
+                     } catch (ParseException e) {
+                         e.printStackTrace();
+                     }
+                 }
 
-                            }
-                        }
-                        instrument = constructInstrumentObject(value, param, instrument);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+             }
             return instrument;
         }
     }
@@ -297,6 +303,8 @@ public class ExcelUtility {
 
     private static Instrument constructInstrumentObject(String value, String param, Instrument instrument) throws ParseException {
         try{
+            value=value.trim();
+            param=param.trim();
             if (param.equals(Constants.TAG_NO)&&!value.isEmpty()) {
                 instrument.setTagNo(value);
             } else if (param.equals(Constants.SR_NO)&&!value.isEmpty()) {
@@ -361,19 +369,31 @@ public class ExcelUtility {
     }
 
 
-    private static boolean makeIndexOfParameter(Iterator<Cell> cellIterator, ExcelResult currentSheetDto) {
+    private static boolean makeIndexOfParameter(Row row, ExcelResult currentSheetDto) {
         Map<Integer, String> parameterMap=currentSheetDto.getHashmap();
         Map<Integer, String> generatedMap = new HashMap<>();
         boolean flag=false;
-        int index=0;
-        while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
+        for(int index=0;index<row.getLastCellNum();index++){
+            Cell cell=row.getCell(index);
+            if(!cell.toString().isEmpty()) {
+                for(Map.Entry<Integer, String> entry:parameterMap.entrySet()) {
+                    String param= cell.getStringCellValue().trim();
+                    if (param.toLowerCase().equals(entry.getValue().toLowerCase())) {
+                        generatedMap.put(index,cell.getStringCellValue());
+                        flag=true;
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i=0;i<row.getLastCellNum();i++) {
+            Cell cell = row.getCell(i);
 
             if(!cell.toString().isEmpty()) {
                 for(Map.Entry<Integer, String> entry:parameterMap.entrySet()) {
-                    if (cell.getStringCellValue().toLowerCase().equals(entry.getValue().toLowerCase())) {
-                           generatedMap.put(index,cell.getStringCellValue());
-                           index++;
+                    String param= cell.getStringCellValue().trim();
+                    if (param.toLowerCase().equals(entry.getValue().toLowerCase())) {
+                           generatedMap.put(i,cell.getStringCellValue());
                            flag=true;
                            break;
                     }
