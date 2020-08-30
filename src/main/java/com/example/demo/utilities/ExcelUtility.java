@@ -187,7 +187,6 @@ public class ExcelUtility {
                         break;
                     }
                     if (param != null) {
-                        value.trim();
                         mInstrument = constructMasterInstrumentObject(value, param, mInstrument);
                     }
 
@@ -200,7 +199,6 @@ public class ExcelUtility {
                 String value = cell.toString();
                 String param = indexParameterMap.get(index);
                 if (param != null) {
-                    value.trim();
                     client = constructClientObject(value, param, client);
                 }
             }
@@ -230,7 +228,6 @@ public class ExcelUtility {
                                  value=new BigDecimal(value).toPlainString(); // Output: 0.00000021
                              }
                          }
-                         value.trim();
                          instrument = constructInstrumentObject(value, param, instrument);
                      } catch (ParseException e) {
                          e.printStackTrace();
@@ -244,7 +241,6 @@ public class ExcelUtility {
 
     private static MasterInstruments constructMasterInstrumentObject(String value, String param, MasterInstruments mInstrument) {
         try{
-
             if (param.equals(Constants.INSTRUMENT_SR_NO_MASTER)) {
                 mInstrument.setInstrumentSerialNo(value);
             }
@@ -278,21 +274,25 @@ public class ExcelUtility {
 
     private static Client constructClientObject(String value, String param, Client client) {
         try{
+            if (value != null) {
+                value=value.trim();
+            }
+            if(param!=null){
+                param=param.trim();
+            }
             if (param.equals(Constants.CLIENT_NAME)&&!value.isEmpty()) {
-                client.setName(value);
+                client.setName(value.trim());
             } else if (param.equals(Constants.CLIENT_ADDRESS)&&!value.isEmpty()) {
-                client.setAddress(value);
+                client.setAddress(value.trim());
             } else if (param.equals(Constants.CLIENT_EMAIL)) {
-                client.setEmail(value);
+                client.setEmail(value.trim());
             } else if (param.equals(Constants.CLIENT_PHONE)) {
-                client.setPhone(value);
+                client.setPhone(value.trim());
             } else if (param.equals(Constants.CLIENT_FAX)) {
-                client.setFax(value);
+                client.setFax(value.trim());
             } else if (param.equals(Constants.CLIENT_DESCRIPTION)) {
-                client.setDescription(value);
+                client.setDescription(value.trim());
                 //instrument.setD
-            }else if(param.equals(Constants.CLIENT_NO)){
-                //client.setId(Double.valueOf(value).longValue());
             }
         }catch(Exception e){
             System.out.println("Error for value :"+value+"  param: "+param);
@@ -303,8 +303,12 @@ public class ExcelUtility {
 
     private static Instrument constructInstrumentObject(String value, String param, Instrument instrument) throws ParseException {
         try{
-            value=value.trim();
-            param=param.trim();
+            if (value != null) {
+                value=value.trim();
+            }
+            if(param!=null){
+                param=param.trim();
+            }
             if (param.equals(Constants.TAG_NO)&&!value.isEmpty()) {
                 instrument.setTagNo(value);
             } else if (param.equals(Constants.SR_NO)&&!value.isEmpty()) {

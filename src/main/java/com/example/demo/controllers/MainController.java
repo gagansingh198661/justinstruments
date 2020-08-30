@@ -322,7 +322,7 @@ public class MainController  {
                 (observableValue, s, t1) -> {
                     List<Instrument> instrumentList=new LinkedList<>();
                     if(!client_name_t.getText().isEmpty())
-                    instrumentList=instrumentService.getInstruments(tag_no_text.getText(),client_name_t.getText()) ;
+                    instrumentList=instrumentService.getInstruments(tag_no_text.getText(),client_name_t.getText().trim()) ;
                     if(instrumentList.size()!=0) {
                         Instrument instrument = instrumentList.get(0);
                         manufacturerInstrument.setText(instrument.getMake());
