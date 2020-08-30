@@ -37,7 +37,7 @@ CREATE TABLE `application_property` (
 
 LOCK TABLES `application_property` WRITE;
 /*!40000 ALTER TABLE `application_property` DISABLE KEYS */;
-INSERT INTO `application_property` VALUES ('mail.transport.protocol','smtp',1),('mail.smtp.host','smtp.gmail.com',2),('mail.smtp.port','587',3),('mail.smtp.user','justinstrumentsinc1@gmail.com',4),('mail.smtp.password','Dhanjal1091.',5),('mail.smtp.starttls.enable','true',6),('mail.smtp.auth','true',7),('database_name','just_instruments',8),('port','3308',9),('username','root',10),('password','',11),('report_path','C:\\Users\\gagan\\Desktop\\GaganJSystems\\just_instruments',12);
+INSERT INTO `application_property` VALUES ('mail.transport.protocol','smtp',1),('mail.smtp.host','smtp.gmail.com',2),('mail.smtp.port','587',3),('mail.smtp.user','justinstrumentsinc1@gmail.com',4),('mail.smtp.password','*******',5),('mail.smtp.starttls.enable','true',6),('mail.smtp.auth','true',7),('database_name','just_instruments',8),('port','3308',9),('username','root',10),('password','',11),('report_path','C:\\Users\\gagan\\Desktop\\GaganJSystems\\just_instruments',12);
 /*!40000 ALTER TABLE `application_property` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
